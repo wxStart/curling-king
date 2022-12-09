@@ -7,7 +7,7 @@ import fs from "fs";
 import { rejects } from "assert";
 const router = new Router();
 
-let number = 0;
+// let number = 0;
 // 上传文件最终路径
 const STATIC_FILES = path.join(__dirname, "../file/files");
 // 上传文件临时路径
@@ -25,18 +25,18 @@ router.post("/upload", async function (ctx, next) {
       let dir = `${STATIC_TEMPORARY}/${hash}`;
 
       try {
-        if (chunkhash == 2 && number < 3) {
-          console.log("number: ", number);
-          number++;
-          resolve({
-            ok: false,
-            hash,
-            chunkhash,
-            message: "失敗",
-            error,
-          });
-          return;
-        }
+        // if (chunkhash == 2 && number < 3) {
+        //   // 模拟失败重连
+        //   number++;
+        //   resolve({
+        //     ok: false,
+        //     hash,
+        //     chunkhash,
+        //     message: "失敗",
+        //     error,
+        //   });
+        //   return;
+        // }
         if (!fs.existsSync(dir)) fs.mkdirSync(dir);
         const buffer = fs.readFileSync(chunk.path);
         const ws = fs.createWriteStream(`${dir}/${chunkhash}`);
