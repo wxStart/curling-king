@@ -1,9 +1,12 @@
-import ClassCom from "./components/ClassCom";
-
+// import ClassCom from "./components/ClassCom";
+// import FunCom from "./components/FunCom";
+import HocCom from "./components/HocCom";
 function App() {
   return (
     <div className="App">
-      <ClassCom />
+      {/* <ClassCom />
+      <FunCom></FunCom> */}
+      <HocCom></HocCom>
     </div>
   );
 }

@@ -6,25 +6,29 @@ export default class ClickNumber extends React.Component {
   };
 
   componentDidMount() {
-    setTimeout(() => {
-      console.log('setTimeout: ', 1111);
-      this.onClickAdd();
-    }, 1000);
+    // setTimeout(() => {
+    //   console.log("setTimeout: ", 1111);
+    //   this.onClickAdd();
+    // }, 1000);
 
-
-    document.getElementById("test").addEventListener("click", () => {
-      console.log("click: ", 1111);
-      this.onClickAdd();
-    });
+    // document.getElementById("test").addEventListener("click", () => {
+    //   console.log("click: ", 1111);
+    //   this.onClickAdd();
+    // });
   }
-
   onClickAdd = () => {
     this.setState({
       number: this.state.number + 1,
     });
-  
+
     console.log("this.state.number: ", this.state.number);
   };
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState.number === 3) {
+      return false; // 返回false不更新
+    }
+    return true;
+  }
 
   onClickAdd1 = () => {
     this.setState((currnetState) => {
