@@ -1,5 +1,7 @@
 import React from "react";
 
+import { createPortal } from "react-dom";
+
 export default class ClickNumber extends React.Component {
   state = {
     number: 0,
@@ -10,7 +12,6 @@ export default class ClickNumber extends React.Component {
     //   console.log("setTimeout: ", 1111);
     //   this.onClickAdd();
     // }, 1000);
-
     // document.getElementById("test").addEventListener("click", () => {
     //   console.log("click: ", 1111);
     //   this.onClickAdd();
