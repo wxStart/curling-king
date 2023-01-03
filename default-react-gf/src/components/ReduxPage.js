@@ -8,7 +8,6 @@ export default class ReduxPage extends React.Component {
   }
 
   addAsync = () => {
-    console.log(111)
     store.dispatch(() => {
       setTimeout(() => {
         store.dispatch({ type: "add" });

@@ -4,7 +4,6 @@ const createStore = (reducer) => {
 
   const dispatch = function (action) {
     state = reducer(state, action);
-    console.log("state: ", state);
     cbs.forEach((element) => {
       element();
     });

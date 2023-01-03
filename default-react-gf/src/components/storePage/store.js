@@ -1,5 +1,7 @@
-import { createStore } from "redux";
-// import { createStore } from "./myRedux";
+// import { createStore, applyMiddleware } from "redux";
+import { createStore,applyMiddleware } from "./myRedux";
+import thunk from "redux-thunk";
+import logger from "redux-logger";
 
 const initialState = {
   count: 1,
@@ -16,6 +18,6 @@ const reduxReducer = (state = initialState, { type }) => {
   }
 };
 
-const store = createStore(reduxReducer);
+const store = createStore(reduxReducer, applyMiddleware(thunk, logger));
 
 export default store;
