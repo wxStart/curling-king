@@ -2,7 +2,10 @@
 // import FunCom from "./components/FunCom";
 // import HocCom from "./components/HocCom";
 // import ReduxPage from "./components/ReduxPage";
-import LazyPage from "./lazyPage/LazyPage";
+// import LazyPage from "./lazyPage/LazyPage";
+// import ContextPage from "./ContextPage";
+
+import RefsPage from "./RefsPage";
 function App() {
   return (
     <div className="App">
@@ -10,7 +13,9 @@ function App() {
       <FunCom></FunCom> */}
       {/* <HocCom></HocCom> */}
       {/* <ReduxPage></ReduxPage> */}
-      <LazyPage></LazyPage>
+      {/* <LazyPage></LazyPage> */}
+      {/* <ContextPage></ContextPage> */}
+      <RefsPage></RefsPage>
     </div>
   );
 }
