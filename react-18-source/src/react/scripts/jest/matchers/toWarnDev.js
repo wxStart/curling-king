@@ -152,7 +152,11 @@ const createMatcherFor = (consoleMethod, matcherName) =>
       // Avoid using Jest's built-in spy since it can't be removed.
       console[consoleMethod] = consoleSpy;
 
-      const onFinally = () => {
+      try {
+        callback();
+      } catch (error) {
+        caughtError = error;
+      } finally {
         // Restore the unspied method so that unexpected errors fail tests.
         console[consoleMethod] = originalMethod;
 
@@ -255,52 +259,12 @@ const createMatcherFor = (consoleMethod, matcherName) =>
         }
 
         return {pass: true};
-      };
-
-      let returnPromise = null;
-      try {
-        const result = callback();
-
-        if (
-          typeof result === 'object' &&
-          result !== null &&
-          typeof result.then === 'function'
-        ) {
-          // `act` returns a thenable that can't be chained.
-          // Once `act(async () => {}).then(() => {}).then(() => {})` works
-          // we can just return `result.then(onFinally, error => ...)`
-          returnPromise = new Promise((resolve, reject) => {
-            result.then(
-              () => {
-                resolve(onFinally());
-              },
-              error => {
-                caughtError = error;
-                return resolve(onFinally());
-              }
-            );
-          });
-        }
-      } catch (error) {
-        caughtError = error;
-      } finally {
-        return returnPromise === null ? onFinally() : returnPromise;
       }
     } else {
       // Any uncaught errors or warnings should fail tests in production mode.
-      const result = callback();
+      callback();
 
-      if (
-        typeof result === 'object' &&
-        result !== null &&
-        typeof result.then === 'function'
-      ) {
-        return result.then(() => {
-          return {pass: true};
-        });
-      } else {
-        return {pass: true};
-      }
+      return {pass: true};
     }
   };
 

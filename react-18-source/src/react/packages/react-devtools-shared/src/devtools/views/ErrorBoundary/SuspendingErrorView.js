@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -13,17 +13,17 @@ import UpdateExistingIssue from './UpdateExistingIssue';
 import ReportNewIssue from './ReportNewIssue';
 import WorkplaceGroup from './WorkplaceGroup';
 
-type Props = {
+type Props = {|
   callStack: string | null,
   componentStack: string | null,
   errorMessage: string | null,
-};
+|};
 
 export default function SuspendingErrorView({
   callStack,
   componentStack,
   errorMessage,
-}: Props): React.Node {
+}: Props) {
   const maybeItem =
     errorMessage !== null ? findGitHubIssue(errorMessage) : null;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -14,15 +14,6 @@ function isEmptyLiteral(node) {
     node.type === 'Literal' &&
     typeof node.value === 'string' &&
     node.value === ''
-  );
-}
-
-function isStringLiteral(node) {
-  return (
-    // TaggedTemplateExpressions can return non-strings
-    (node.type === 'TemplateLiteral' &&
-      node.parent.type !== 'TaggedTemplateExpression') ||
-    (node.type === 'Literal' && typeof node.value === 'string')
   );
 }
 
@@ -129,9 +120,9 @@ function isSafeTypeofExpression(originalValueNode, node) {
   return false;
 }
 
-/**
+/** 
   Returns true if the code is inside an `if` block that validates the value
-  excludes symbols and objects. Examples:
+  excludes symbols and objects. Examples: 
   * if (typeof value === 'string') { }
   * if (typeof value === 'string' || typeof value === 'number') { }
   * if (typeof value === 'string' || someOtherTest) { }
@@ -268,24 +259,7 @@ function hasCoercionCheck(node) {
   }
 }
 
-function isOnlyAddingStrings(node) {
-  if (node.operator !== '+') {
-    return;
-  }
-  if (isStringLiteral(node.left) && isStringLiteral(node.right)) {
-    // It's always safe to add string literals
-    return true;
-  }
-  if (node.left.type === 'BinaryExpression' && isStringLiteral(node.right)) {
-    return isOnlyAddingStrings(node.left);
-  }
-}
-
-function checkBinaryExpression(context, node) {
-  if (isOnlyAddingStrings(node)) {
-    return;
-  }
-
+function plusEmptyString(context, node) {
   if (
     node.operator === '+' &&
     (isEmptyLiteral(node.left) || isEmptyLiteral(node.right))
@@ -363,7 +337,7 @@ module.exports = {
   },
   create(context) {
     return {
-      BinaryExpression: node => checkBinaryExpression(context, node),
+      BinaryExpression: node => plusEmptyString(context, node),
       CallExpression: node => coerceWithStringConstructor(context, node),
     };
   },

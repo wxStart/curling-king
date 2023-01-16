@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -21,7 +21,10 @@ describe('ReactIncrementalErrorReplay-test', () => {
 
     // This is the method we're going to test.
     // If this is no longer used, you can delete this test file.;
-    const {assignFiberPropertiesInDEV} = require('../ReactFiber');
+
+    const assignFiberPropertiesInDEV = gate(flags => flags.new)
+      ? require('../ReactFiber.new').assignFiberPropertiesInDEV
+      : require('../ReactFiber.old').assignFiberPropertiesInDEV;
 
     // Get a real fiber.
     const realFiber = ReactTestRenderer.create(<div />).root._currentFiber();

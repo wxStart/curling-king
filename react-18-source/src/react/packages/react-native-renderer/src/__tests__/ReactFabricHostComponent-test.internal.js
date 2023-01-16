@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * (c) Facebook, Inc. and its affiliates. Confidential and proprietary.
  *
  * @emails react-core
  * @jest-environment node
@@ -38,7 +38,7 @@ function mockRenderKeys(keyLists) {
 
   const mockContainerTag = 11;
   const MockView = createReactNativeComponentClass('RCTMockView', () => ({
-    validAttributes: {foo: true},
+    validAttributes: {},
     uiViewClassName: 'RCTMockView',
   }));
 
@@ -200,15 +200,21 @@ describe('measureLayout', () => {
 });
 
 describe('setNativeProps', () => {
-  test('setNativeProps(...) invokes setNativeProps on Fabric UIManager', () => {
+  test('setNativeProps(...) emits a warning', () => {
     const {
       UIManager,
     } = require('react-native/Libraries/ReactPrivate/ReactNativePrivateInterface');
 
     const [[fooRef]] = mockRenderKeys([['foo']]);
-    fooRef.setNativeProps({foo: 'baz'});
 
+    expect(() => {
+      fooRef.setNativeProps({});
+    }).toErrorDev(
+      ['Warning: setNativeProps is not currently supported in Fabric'],
+      {
+        withoutStack: true,
+      },
+    );
     expect(UIManager.updateView).not.toBeCalled();
-    expect(nativeFabricUIManager.setNativeProps).toHaveBeenCalledTimes(1);
   });
 });

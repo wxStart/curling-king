@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -48,20 +48,11 @@ describe('ReactFlightNativeRelay', () => {
       ReactNativeFlightRelayClient.resolveRow(response, chunk);
     }
     ReactNativeFlightRelayClient.close(response);
-    const promise = ReactNativeFlightRelayClient.getRoot(response);
-    let model;
-    let error;
-    promise.then(
-      m => (model = m),
-      e => (error = e),
-    );
-    if (error) {
-      throw error;
-    }
+    const model = response.readRoot();
     return model;
   }
 
-  it('can render a Server Component', () => {
+  it('can render a server component', () => {
     function Bar({text}) {
       return <Text>{text.toUpperCase()}</Text>;
     }
@@ -86,7 +77,7 @@ describe('ReactFlightNativeRelay', () => {
     expect(model).toMatchSnapshot();
   });
 
-  it('can render a Client Component using a module reference and render there', () => {
+  it('can render a client component using a module reference and render there', () => {
     function UserClient(props) {
       return (
         <Text>
@@ -132,7 +123,7 @@ describe('ReactFlightNativeRelay', () => {
       );
       readThrough(transport);
     }).toErrorDev(
-      'Only plain objects can be passed to Client Components from Server Components. ',
+      'Only plain objects can be passed to client components from server components. ',
       {withoutStack: true},
     );
   });

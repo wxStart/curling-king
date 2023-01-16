@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -271,15 +271,13 @@ describe('ReactTestRenderer', () => {
       return <div>Hello, world</div>;
     }
     class Foo extends React.Component {
-      fooRef = React.createRef();
       render() {
-        return <Bar ref={this.fooRef} />;
+        return <Bar ref="foo" />;
       }
     }
     class Baz extends React.Component {
-      bazRef = React.createRef();
       render() {
-        return <div ref={this.bazRef} />;
+        return <div ref="baz" />;
       }
     }
     ReactTestRenderer.create(<Baz />);
@@ -300,12 +298,11 @@ describe('ReactTestRenderer', () => {
     const mockAnchorInstance = {hover: () => {}};
     const log = [];
     class Foo extends React.Component {
-      barRef = React.createRef();
       componentDidMount() {
-        log.push(this.barRef.current);
+        log.push(this.refs.bar);
       }
       render() {
-        return <a ref={this.barRef}>Hello, world</a>;
+        return <a ref="bar">Hello, world</a>;
       }
     }
     function createNodeMock(element) {
@@ -358,7 +355,7 @@ describe('ReactTestRenderer', () => {
   it('supports unmounting when using refs', () => {
     class Foo extends React.Component {
       render() {
-        return <div ref={React.createRef()} />;
+        return <div ref="foo" />;
       }
     }
     const inst = ReactTestRenderer.create(<Foo />, {
@@ -397,11 +394,7 @@ describe('ReactTestRenderer', () => {
     };
     class Foo extends React.Component {
       render() {
-        return this.props.useDiv ? (
-          <div ref={React.createRef()} />
-        ) : (
-          <span ref={React.createRef()} />
-        );
+        return this.props.useDiv ? <div ref="foo" /> : <span ref="foo" />;
       }
     }
     const inst = ReactTestRenderer.create(<Foo useDiv={true} />, {

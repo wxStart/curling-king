@@ -574,24 +574,6 @@ const attributes = [
     read: getSVGAttribute('externalResourcesRequired'),
   },
   {
-    name: 'fetchPriority',
-    overrideStringValue: 'high',
-    tagName: 'img',
-    read: getProperty('fetchPriority'),
-  },
-  {
-    name: 'fetchpriority',
-    overrideStringValue: 'high',
-    tagName: 'img',
-    read: getProperty('fetchPriority'),
-  },
-  {
-    name: 'fetchPriority',
-    overrideStringValue: 'high',
-    tagName: 'link',
-    read: getProperty('fetchPriority'),
-  },
-  {
     name: 'fill',
     containerTagName: 'svg',
     tagName: 'path',

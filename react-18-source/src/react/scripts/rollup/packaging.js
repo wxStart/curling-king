@@ -24,8 +24,6 @@ const {
   NODE_DEV,
   NODE_PROD,
   NODE_PROFILING,
-  BUN_DEV,
-  BUN_PROD,
   FB_WWW_DEV,
   FB_WWW_PROD,
   FB_WWW_PROFILING,
@@ -35,7 +33,6 @@ const {
   RN_FB_DEV,
   RN_FB_PROD,
   RN_FB_PROFILING,
-  BROWSER_SCRIPT,
 } = Bundles.bundleTypes;
 
 function getPackageName(name) {
@@ -45,15 +42,12 @@ function getPackageName(name) {
   return name;
 }
 
-function getBundleOutputPath(bundle, bundleType, filename, packageName) {
+function getBundleOutputPath(bundleType, filename, packageName) {
   switch (bundleType) {
     case NODE_ES2015:
       return `build/node_modules/${packageName}/cjs/${filename}`;
     case NODE_ESM:
       return `build/node_modules/${packageName}/esm/${filename}`;
-    case BUN_DEV:
-    case BUN_PROD:
-      return `build/node_modules/${packageName}/cjs/${filename}`;
     case NODE_DEV:
     case NODE_PROD:
     case NODE_PROFILING:
@@ -94,23 +88,6 @@ function getBundleOutputPath(bundle, bundleType, filename, packageName) {
         default:
           throw new Error('Unknown RN package.');
       }
-    case BROWSER_SCRIPT: {
-      // Bundles that are served as browser scripts need to be able to be sent
-      // straight to the browser with any additional bundling. We shouldn't use
-      // a module to re-export. Depending on how they are served, they also may
-      // not go through package.json module resolution, so we shouldn't rely on
-      // that either. We should consider the output path as part of the public
-      // contract, and explicitly specify its location within the package's
-      // directory structure.
-      const outputPath = bundle.outputPath;
-      if (!outputPath) {
-        throw new Error(
-          'Bundles with type BROWSER_SCRIPT must specific an explicit ' +
-            'output path.'
-        );
-      }
-      return `build/node_modules/${packageName}/${outputPath}`;
-    }
     default:
       throw new Error('Unknown bundle type.');
   }
@@ -176,7 +153,6 @@ function filterOutEntrypoints(name) {
   let packageJSON = JSON.parse(readFileSync(jsonPath));
   let files = packageJSON.files;
   let exportsJSON = packageJSON.exports;
-  let browserJSON = packageJSON.browser;
   if (!Array.isArray(files)) {
     throw new Error('expected all package.json files to contain a files field');
   }
@@ -212,9 +188,6 @@ function filterOutEntrypoints(name) {
         } else {
           delete exportsJSON['./' + filename.replace(/\.js$/, '')];
         }
-      }
-      if (browserJSON) {
-        delete browserJSON['./' + filename];
       }
     }
 

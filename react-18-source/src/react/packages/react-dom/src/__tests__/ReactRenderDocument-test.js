@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -62,8 +62,7 @@ describe('rendering React components at document', () => {
       expect(body === testDocument.body).toBe(true);
     });
 
-    // @gate enableHostSingletons
-    it('should be able to unmount component from document node, but leaves singleton nodes intact', () => {
+    it('should not be able to unmount component from document node', () => {
       class Root extends React.Component {
         render() {
           return (
@@ -82,40 +81,7 @@ describe('rendering React components at document', () => {
       ReactDOM.hydrate(<Root />, testDocument);
       expect(testDocument.body.innerHTML).toBe('Hello world');
 
-      const originalDocEl = testDocument.documentElement;
-      const originalHead = testDocument.head;
-      const originalBody = testDocument.body;
-
-      // When we unmount everything is removed except the singleton nodes of html, head, and body
-      ReactDOM.unmountComponentAtNode(testDocument);
-      expect(testDocument.firstChild).toBe(originalDocEl);
-      expect(testDocument.head).toBe(originalHead);
-      expect(testDocument.body).toBe(originalBody);
-      expect(originalBody.firstChild).toEqual(null);
-      expect(originalHead.firstChild).toEqual(null);
-    });
-
-    // @gate !enableHostSingletons
-    it('should be able to unmount component from document node', () => {
-      class Root extends React.Component {
-        render() {
-          return (
-            <html>
-              <head>
-                <title>Hello World</title>
-              </head>
-              <body>Hello world</body>
-            </html>
-          );
-        }
-      }
-
-      const markup = ReactDOMServer.renderToString(<Root />);
-      const testDocument = getTestDocument(markup);
-      ReactDOM.hydrate(<Root />, testDocument);
-      expect(testDocument.body.innerHTML).toBe('Hello world');
-
-      // When we unmount everything is removed except the persistent nodes of html, head, and body
+      // In Fiber this actually works. It might not be a good idea though.
       ReactDOM.unmountComponentAtNode(testDocument);
       expect(testDocument.firstChild).toBe(null);
     });
@@ -253,21 +219,10 @@ describe('rendering React components at document', () => {
         }
       }
 
-      if (gate(flags => flags.enableFloat)) {
-        // with float the title no longer is a hydration mismatch so we get an error on the body mismatch
-        expect(() =>
-          ReactDOM.hydrate(<Component text="Hello world" />, testDocument),
-        ).toErrorDev(
-          'Expected server HTML to contain a matching text node for "Hello world" in <body>',
-        );
-      } else {
-        // getTestDocument() has an extra <meta> that we didn't render.
-        expect(() =>
-          ReactDOM.hydrate(<Component text="Hello world" />, testDocument),
-        ).toErrorDev(
-          'Did not expect server HTML to contain a <meta> in <head>.',
-        );
-      }
+      // getTestDocument() has an extra <meta> that we didn't render.
+      expect(() =>
+        ReactDOM.hydrate(<Component text="Hello world" />, testDocument),
+      ).toErrorDev('Did not expect server HTML to contain a <meta> in <head>.');
       expect(testDocument.body.innerHTML).toBe('Hello world');
     });
 

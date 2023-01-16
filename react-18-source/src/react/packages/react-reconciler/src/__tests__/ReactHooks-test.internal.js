@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -1071,9 +1071,7 @@ describe('ReactHooks', () => {
     expect(() => {
       expect(() => {
         ReactTestRenderer.create(<App />);
-      }).toThrow(
-        'Should have a queue. This is likely a bug in React. Please file an issue.',
-      );
+      }).toThrow('Rendered more hooks than during the previous render.');
     }).toErrorDev([
       'Do not call Hooks inside useEffect(...), useMemo(...), or other built-in Hooks',
       'Do not call Hooks inside useEffect(...), useMemo(...), or other built-in Hooks',

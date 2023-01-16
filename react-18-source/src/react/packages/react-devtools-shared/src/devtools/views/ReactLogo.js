@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -11,11 +11,11 @@ import * as React from 'react';
 
 import styles from './ReactLogo.css';
 
-type Props = {
+type Props = {|
   className?: string,
-};
+|};
 
-export default function ReactLogo({className}: Props): React.Node {
+export default function ReactLogo({className}: Props) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

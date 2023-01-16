@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -26,15 +26,11 @@ if (__DEV__) {
   Object.freeze(emptyObject);
 }
 
-const {measure, findNodeAtPoint} = nativeFabricUIManager;
-
 let createHierarchy;
 let getHostNode;
 let getHostProps;
 let lastNonHostInstance;
-let getInspectorDataForInstance: (
-  closestInstance: Fiber | null,
-) => InspectorData;
+let getInspectorDataForInstance;
 let getOwnerHierarchy;
 let traverseOwnerTreeUp;
 
@@ -55,7 +51,7 @@ if (__DEV__ || enableGetInspectorDataForInstanceInProduction) {
               hostFiber.stateNode.node;
 
             if (shadowNode) {
-              measure(shadowNode, callback);
+              nativeFabricUIManager.measure(shadowNode, callback);
             } else {
               return UIManager.measure(
                 getHostNode(fiber, findNodeHandle),
@@ -114,7 +110,6 @@ if (__DEV__ || enableGetInspectorDataForInstanceInProduction) {
     const selectedIndex = fiberHierarchy.indexOf(instance);
 
     return {
-      closestInstance: instance,
       hierarchy,
       props,
       selectedIndex,
@@ -147,14 +142,8 @@ if (__DEV__ || enableGetInspectorDataForInstanceInProduction) {
   };
 }
 
-let getInspectorDataForViewTag: (viewTag: number) => Object;
-let getInspectorDataForViewAtPoint: (
-  findNodeHandle: (componentOrHandle: any) => ?number,
-  inspectedView: Object,
-  locationX: number,
-  locationY: number,
-  callback: (viewData: TouchedViewDataAtPoint) => mixed,
-) => void;
+let getInspectorDataForViewTag;
+let getInspectorDataForViewAtPoint;
 
 if (__DEV__) {
   getInspectorDataForViewTag = function(viewTag: number): Object {
@@ -197,7 +186,7 @@ if (__DEV__) {
 
     if (inspectedView._internalInstanceHandle != null) {
       // For Fabric we can look up the instance handle directly and measure it.
-      findNodeAtPoint(
+      nativeFabricUIManager.findNodeAtPoint(
         inspectedView._internalInstanceHandle.stateNode.node,
         locationX,
         locationY,
@@ -217,7 +206,7 @@ if (__DEV__) {
           const nativeViewTag =
             internalInstanceHandle.stateNode.canonical._nativeTag;
 
-          measure(
+          nativeFabricUIManager.measure(
             internalInstanceHandle.stateNode.node,
             (x, y, width, height, pageX, pageY) => {
               const inspectorData = getInspectorDataForInstance(

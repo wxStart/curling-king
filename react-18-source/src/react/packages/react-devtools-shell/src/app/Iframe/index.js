@@ -4,7 +4,7 @@ import * as React from 'react';
 import {Fragment} from 'react';
 import {createPortal} from 'react-dom';
 
-export default function Iframe(): React.Node {
+export default function Iframe() {
   return (
     <Fragment>
       <h2>Iframe</h2>

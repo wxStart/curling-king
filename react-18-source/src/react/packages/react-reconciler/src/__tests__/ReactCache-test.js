@@ -2,17 +2,15 @@ let React;
 let ReactNoop;
 let Cache;
 let getCacheSignal;
+let getCacheForType;
 let Scheduler;
 let act;
 let Suspense;
-let Offscreen;
 let useCacheRefresh;
 let startTransition;
 let useState;
-let cache;
 
-let getTextCache;
-let textCaches;
+let caches;
 let seededCache;
 
 describe('ReactCache', () => {
@@ -25,68 +23,65 @@ describe('ReactCache', () => {
     Scheduler = require('scheduler');
     act = require('jest-react').act;
     Suspense = React.Suspense;
-    cache = React.cache;
-    Offscreen = React.unstable_Offscreen;
     getCacheSignal = React.unstable_getCacheSignal;
+    getCacheForType = React.unstable_getCacheForType;
     useCacheRefresh = React.unstable_useCacheRefresh;
     startTransition = React.startTransition;
     useState = React.useState;
 
-    textCaches = [];
+    caches = [];
     seededCache = null;
-
-    if (gate(flags => flags.enableCache)) {
-      getTextCache = cache(() => {
-        if (seededCache !== null) {
-          // Trick to seed a cache before it exists.
-          // TODO: Need a built-in API to seed data before the initial render (i.e.
-          // not a refresh because nothing has mounted yet).
-          const textCache = seededCache;
-          seededCache = null;
-          return textCache;
-        }
-
-        const data = new Map();
-        const version = textCaches.length + 1;
-        const textCache = {
-          version,
-          data,
-          resolve(text) {
-            const record = data.get(text);
-            if (record === undefined) {
-              const newRecord = {
-                status: 'resolved',
-                value: text,
-                cleanupScheduled: false,
-              };
-              data.set(text, newRecord);
-            } else if (record.status === 'pending') {
-              record.value.resolve();
-            }
-          },
-          reject(text, error) {
-            const record = data.get(text);
-            if (record === undefined) {
-              const newRecord = {
-                status: 'rejected',
-                value: error,
-                cleanupScheduled: false,
-              };
-              data.set(text, newRecord);
-            } else if (record.status === 'pending') {
-              record.value.reject();
-            }
-          },
-        };
-        textCaches.push(textCache);
-        return textCache;
-      });
-    }
   });
 
+  function createTextCache() {
+    if (seededCache !== null) {
+      // Trick to seed a cache before it exists.
+      // TODO: Need a built-in API to seed data before the initial render (i.e.
+      // not a refresh because nothing has mounted yet).
+      const cache = seededCache;
+      seededCache = null;
+      return cache;
+    }
+
+    const data = new Map();
+    const version = caches.length + 1;
+    const cache = {
+      version,
+      data,
+      resolve(text) {
+        const record = data.get(text);
+        if (record === undefined) {
+          const newRecord = {
+            status: 'resolved',
+            value: text,
+            cleanupScheduled: false,
+          };
+          data.set(text, newRecord);
+        } else if (record.status === 'pending') {
+          record.value.resolve();
+        }
+      },
+      reject(text, error) {
+        const record = data.get(text);
+        if (record === undefined) {
+          const newRecord = {
+            status: 'rejected',
+            value: error,
+            cleanupScheduled: false,
+          };
+          data.set(text, newRecord);
+        } else if (record.status === 'pending') {
+          record.value.reject();
+        }
+      },
+    };
+    caches.push(cache);
+    return cache;
+  }
+
   function readText(text) {
-    const signal = getCacheSignal ? getCacheSignal() : null;
-    const textCache = getTextCache();
+    const signal = getCacheSignal();
+    const textCache = getCacheForType(createTextCache);
     const record = textCache.data.get(text);
     if (record !== undefined) {
       if (!record.cleanupScheduled) {
@@ -94,13 +89,11 @@ describe('ReactCache', () => {
         // schedule a cleanup function for it.
         // TODO: Add ability to cleanup entries seeded w useCacheRefresh()
         record.cleanupScheduled = true;
-        if (getCacheSignal) {
-          signal.addEventListener('abort', () => {
-            Scheduler.unstable_yieldValue(
-              `Cache cleanup: ${text} [v${textCache.version}]`,
-            );
-          });
-        }
+        signal.addEventListener('abort', () => {
+          Scheduler.unstable_yieldValue(
+            `Cache cleanup: ${text} [v${textCache.version}]`,
+          );
+        });
       }
       switch (record.status) {
         case 'pending':
@@ -142,13 +135,11 @@ describe('ReactCache', () => {
       };
       textCache.data.set(text, newRecord);
 
-      if (getCacheSignal) {
-        signal.addEventListener('abort', () => {
-          Scheduler.unstable_yieldValue(
-            `Cache cleanup: ${text} [v${textCache.version}]`,
-          );
-        });
-      }
+      signal.addEventListener('abort', () => {
+        Scheduler.unstable_yieldValue(
+          `Cache cleanup: ${text} [v${textCache.version}]`,
+        );
+      });
       throw thenable;
     }
   }
@@ -167,22 +158,22 @@ describe('ReactCache', () => {
 
   function seedNextTextCache(text) {
     if (seededCache === null) {
-      seededCache = getTextCache();
+      seededCache = createTextCache();
     }
     seededCache.resolve(text);
   }
 
   function resolveMostRecentTextCache(text) {
-    if (textCaches.length === 0) {
+    if (caches.length === 0) {
       throw Error('Cache does not exist.');
     } else {
       // Resolve the most recently created cache. An older cache can by
-      // resolved with `textCaches[index].resolve(text)`.
-      textCaches[textCaches.length - 1].resolve(text);
+      // resolved with `caches[index].resolve(text)`.
+      caches[caches.length - 1].resolve(text);
     }
   }
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('render Cache component', async () => {
     const root = ReactNoop.createRoot();
     await act(async () => {
@@ -191,7 +182,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Hi');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('mount new data', async () => {
     const root = ReactNoop.createRoot();
     await act(async () => {
@@ -220,7 +211,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCache
+  // @gate experimental || www
   test('root acts as implicit cache boundary', async () => {
     const root = ReactNoop.createRoot();
     await act(async () => {
@@ -247,7 +238,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('multiple new Cache boundaries in the same mount share the same, fresh root cache', async () => {
     function App() {
       return (
@@ -294,7 +285,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('multiple new Cache boundaries in the same update share the same, fresh cache', async () => {
     function App({showMore}) {
       return showMore ? (
@@ -350,7 +341,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test(
     'nested cache boundaries share the same cache as the root during ' +
       'the initial render',
@@ -390,7 +381,7 @@ describe('ReactCache', () => {
     },
   );
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('new content inside an existing Cache boundary should re-use already cached data', async () => {
     function App({showMore}) {
       return (
@@ -434,7 +425,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('a new Cache boundary uses fresh cache', async () => {
     // The only difference from the previous test is that the "Show More"
     // content is wrapped in a nested <Cache /> boundary
@@ -492,7 +483,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye!');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('inner/outer cache boundaries uses the same cache instance on initial render', async () => {
     const root = ReactNoop.createRoot();
 
@@ -574,7 +565,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('inner/ outer cache boundaries added in the same update use the same cache instance', async () => {
     const root = ReactNoop.createRoot();
 
@@ -666,7 +657,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCache
+  // @gate experimental || www
   test('refresh a cache boundary', async () => {
     let refresh;
     function App() {
@@ -678,9 +669,11 @@ describe('ReactCache', () => {
     const root = ReactNoop.createRoot();
     await act(async () => {
       root.render(
-        <Suspense fallback={<Text text="Loading..." />}>
-          <App />
-        </Suspense>,
+        <Cache>
+          <Suspense fallback={<Text text="Loading..." />}>
+            <App />
+          </Suspense>
+        </Cache>,
       );
     });
     expect(Scheduler).toHaveYielded(['Cache miss! [A]', 'Loading...']);
@@ -703,20 +696,19 @@ describe('ReactCache', () => {
       resolveMostRecentTextCache('A');
     });
     // Note that the version has updated
-    if (getCacheSignal) {
-      expect(Scheduler).toHaveYielded(['A [v2]', 'Cache cleanup: A [v1]']);
-    } else {
-      expect(Scheduler).toHaveYielded(['A [v2]']);
-    }
+    expect(Scheduler).toHaveYielded(['A [v2]']);
     expect(root).toMatchRenderedOutput('A [v2]');
 
     await act(async () => {
       root.render('Bye');
     });
+    // the original cache instance does not cleanup since it is still referenced
+    // by the root, but the refreshed inner cache does cleanup
+    expect(Scheduler).toHaveYielded(['Cache cleanup: A [v2]']);
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('refresh the root cache', async () => {
     let refresh;
     function App() {
@@ -764,7 +756,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('refresh the root cache without a transition', async () => {
     let refresh;
     function App() {
@@ -819,20 +811,11 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('refresh a cache with seed data', async () => {
-    let refreshWithSeed;
+    let refresh;
     function App() {
-      const refresh = useCacheRefresh();
-      const [seed, setSeed] = useState({fn: null});
-      if (seed.fn) {
-        seed.fn();
-        seed.fn = null;
-      }
-      refreshWithSeed = fn => {
-        setSeed({fn});
-        refresh();
-      };
+      refresh = useCacheRefresh();
       return <AsyncText showVersion={true} text="A" />;
     }
 
@@ -860,14 +843,11 @@ describe('ReactCache', () => {
     await act(async () => {
       // Refresh the cache with seeded data, like you would receive from a
       // server mutation.
-      // TODO: Seeding multiple typed textCaches. Should work by calling `refresh`
+      // TODO: Seeding multiple typed caches. Should work by calling `refresh`
       // multiple times with different key/value pairs
-      startTransition(() =>
-        refreshWithSeed(() => {
-          const textCache = getTextCache();
-          textCache.resolve('A');
-        }),
-      );
+      const cache = createTextCache();
+      cache.resolve('A');
+      startTransition(() => refresh(createTextCache, cache));
     });
     // The root should re-render without a cache miss.
     // The cache is not cleared up yet, since it's still reference by the root
@@ -882,7 +862,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('refreshing a parent cache also refreshes its children', async () => {
     let refreshShell;
     function RefreshShell() {
@@ -961,7 +941,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye!');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test(
     'refreshing a cache boundary does not refresh the other boundaries ' +
       'that mounted at the same time (i.e. the ones that share the same cache)',
@@ -1049,7 +1029,7 @@ describe('ReactCache', () => {
     },
   );
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test(
     'mount a new Cache boundary in a sibling while simultaneously ' +
       'resolving a Suspense boundary',
@@ -1122,7 +1102,7 @@ describe('ReactCache', () => {
     },
   );
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('cache pool is cleared once transitions that depend on it commit their shell', async () => {
     function Child({text}) {
       return (
@@ -1218,7 +1198,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye!');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('cache pool is not cleared by arbitrary commits', async () => {
     function App() {
       return (
@@ -1297,7 +1277,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye!');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('cache boundary uses a fresh cache when its key changes', async () => {
     const root = ReactNoop.createRoot();
     seedNextTextCache('A');
@@ -1336,7 +1316,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye!');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('overlapping transitions after an initial mount use the same fresh cache', async () => {
     const root = ReactNoop.createRoot();
     await act(async () => {
@@ -1407,7 +1387,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye!');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('overlapping updates after an initial mount use the same fresh cache', async () => {
     const root = ReactNoop.createRoot();
     await act(async () => {
@@ -1473,7 +1453,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye!');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test('cleans up cache only used in an aborted transition', async () => {
     const root = ReactNoop.createRoot();
     seedNextTextCache('A');
@@ -1528,7 +1508,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye!');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test.skip('if a root cache refresh never commits its fresh cache is released', async () => {
     const root = ReactNoop.createRoot();
     let refresh;
@@ -1570,7 +1550,7 @@ describe('ReactCache', () => {
     expect(root).toMatchRenderedOutput('Bye!');
   });
 
-  // @gate enableCacheElement && enableCache
+  // @gate experimental || www
   test.skip('if a cache boundary refresh never commits its fresh cache is released', async () => {
     const root = ReactNoop.createRoot();
     let refresh;
@@ -1609,185 +1589,5 @@ describe('ReactCache', () => {
       'Cache cleanup: A [v2]',
     ]);
     expect(root).toMatchRenderedOutput('Bye!');
-  });
-
-  // @gate enableOffscreen
-  // @gate enableCache
-  test('prerender a new cache boundary inside an Offscreen tree', async () => {
-    function App({prerenderMore}) {
-      return (
-        <Offscreen mode="hidden">
-          <div>
-            {prerenderMore ? (
-              <Cache>
-                <AsyncText text="More" />
-              </Cache>
-            ) : null}
-          </div>
-        </Offscreen>
-      );
-    }
-
-    const root = ReactNoop.createRoot();
-    await act(async () => {
-      root.render(<App prerenderMore={false} />);
-    });
-    expect(Scheduler).toHaveYielded([]);
-    expect(root).toMatchRenderedOutput(<div hidden={true} />);
-
-    seedNextTextCache('More');
-    await act(async () => {
-      root.render(<App prerenderMore={true} />);
-    });
-    expect(Scheduler).toHaveYielded(['More']);
-    expect(root).toMatchRenderedOutput(<div hidden={true}>More</div>);
-  });
-
-  // @gate enableCache
-  it('cache objects and primitive arguments and a mix of them', async () => {
-    const root = ReactNoop.createRoot();
-    const types = cache((a, b) => ({a: typeof a, b: typeof b}));
-    function Print({a, b}) {
-      return types(a, b).a + ' ' + types(a, b).b + ' ';
-    }
-    function Same({a, b}) {
-      const x = types(a, b);
-      const y = types(a, b);
-      return (x === y).toString() + ' ';
-    }
-    function FlippedOrder({a, b}) {
-      return (types(a, b) === types(b, a)).toString() + ' ';
-    }
-    function FewerArgs({a, b}) {
-      return (types(a, b) === types(a)).toString() + ' ';
-    }
-    function MoreArgs({a, b}) {
-      return (types(a) === types(a, b)).toString() + ' ';
-    }
-    await act(async () => {
-      root.render(
-        <>
-          <Print a="e" b="f" />
-          <Same a="a" b="b" />
-          <FlippedOrder a="c" b="d" />
-          <FewerArgs a="e" b="f" />
-          <MoreArgs a="g" b="h" />
-        </>,
-      );
-    });
-    expect(root).toMatchRenderedOutput('string string true false false false ');
-    await act(async () => {
-      root.render(
-        <>
-          <Print a="e" b={null} />
-          <Same a="a" b={null} />
-          <FlippedOrder a="c" b={null} />
-          <FewerArgs a="e" b={null} />
-          <MoreArgs a="g" b={null} />
-        </>,
-      );
-    });
-    expect(root).toMatchRenderedOutput('string object true false false false ');
-    const obj = {};
-    await act(async () => {
-      root.render(
-        <>
-          <Print a="e" b={obj} />
-          <Same a="a" b={obj} />
-          <FlippedOrder a="c" b={obj} />
-          <FewerArgs a="e" b={obj} />
-          <MoreArgs a="g" b={obj} />
-        </>,
-      );
-    });
-    expect(root).toMatchRenderedOutput('string object true false false false ');
-    const sameObj = {};
-    await act(async () => {
-      root.render(
-        <>
-          <Print a={sameObj} b={sameObj} />
-          <Same a={sameObj} b={sameObj} />
-          <FlippedOrder a={sameObj} b={sameObj} />
-          <FewerArgs a={sameObj} b={sameObj} />
-          <MoreArgs a={sameObj} b={sameObj} />
-        </>,
-      );
-    });
-    expect(root).toMatchRenderedOutput('object object true true false false ');
-    const objA = {};
-    const objB = {};
-    await act(async () => {
-      root.render(
-        <>
-          <Print a={objA} b={objB} />
-          <Same a={objA} b={objB} />
-          <FlippedOrder a={objA} b={objB} />
-          <FewerArgs a={objA} b={objB} />
-          <MoreArgs a={objA} b={objB} />
-        </>,
-      );
-    });
-    expect(root).toMatchRenderedOutput('object object true false false false ');
-    const sameSymbol = Symbol();
-    await act(async () => {
-      root.render(
-        <>
-          <Print a={sameSymbol} b={sameSymbol} />
-          <Same a={sameSymbol} b={sameSymbol} />
-          <FlippedOrder a={sameSymbol} b={sameSymbol} />
-          <FewerArgs a={sameSymbol} b={sameSymbol} />
-          <MoreArgs a={sameSymbol} b={sameSymbol} />
-        </>,
-      );
-    });
-    expect(root).toMatchRenderedOutput('symbol symbol true true false false ');
-    const notANumber = +'nan';
-    await act(async () => {
-      root.render(
-        <>
-          <Print a={1} b={notANumber} />
-          <Same a={1} b={notANumber} />
-          <FlippedOrder a={1} b={notANumber} />
-          <FewerArgs a={1} b={notANumber} />
-          <MoreArgs a={1} b={notANumber} />
-        </>,
-      );
-    });
-    expect(root).toMatchRenderedOutput('number number true false false false ');
-  });
-
-  // @gate enableCache
-  it('cached functions that throw should cache the error', async () => {
-    const root = ReactNoop.createRoot();
-    const throws = cache(v => {
-      throw new Error(v);
-    });
-    let x;
-    let y;
-    let z;
-    function Test() {
-      try {
-        throws(1);
-      } catch (e) {
-        x = e;
-      }
-      try {
-        throws(1);
-      } catch (e) {
-        y = e;
-      }
-      try {
-        throws(2);
-      } catch (e) {
-        z = e;
-      }
-
-      return 'Blank';
-    }
-    await act(async () => {
-      root.render(<Test />);
-    });
-    expect(x).toBe(y);
-    expect(z).not.toBe(x);
   });
 });

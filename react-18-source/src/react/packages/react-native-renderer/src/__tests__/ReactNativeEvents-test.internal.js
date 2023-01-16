@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -62,8 +62,6 @@ const fakeRequireNativeComponent = (uiViewClassName, validAttributes) => {
 
 beforeEach(() => {
   jest.resetModules();
-
-  require('react-native/Libraries/ReactPrivate/InitializeNativeFabricUIManager');
 
   PropTypes = require('prop-types');
   RCTEventEmitter = require('react-native/Libraries/ReactPrivate/ReactNativePrivateInterface')

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -218,12 +218,10 @@ export function attach(
         const internalInstance = args[0];
         const hostContainerInfo = args[3];
         if (getElementType(internalInstance) === ElementTypeOtherOrUnknown) {
-          // $FlowFixMe[object-this-reference] found when upgrading Flow
           return fn.apply(this, args);
         }
         if (hostContainerInfo._topLevelWrapper === undefined) {
           // SSR
-          // $FlowFixMe[object-this-reference] found when upgrading Flow
           return fn.apply(this, args);
         }
 
@@ -243,12 +241,10 @@ export function attach(
         );
 
         try {
-          // $FlowFixMe[object-this-reference] found when upgrading Flow
           const result = fn.apply(this, args);
           parentIDStack.pop();
           return result;
         } catch (err) {
-          // $FlowFixMe[incompatible-type] found when upgrading Flow
           parentIDStack = [];
           throw err;
         } finally {
@@ -264,7 +260,6 @@ export function attach(
       performUpdateIfNecessary(fn, args) {
         const internalInstance = args[0];
         if (getElementType(internalInstance) === ElementTypeOtherOrUnknown) {
-          // $FlowFixMe[object-this-reference] found when upgrading Flow
           return fn.apply(this, args);
         }
 
@@ -273,7 +268,6 @@ export function attach(
 
         const prevChildren = getChildren(internalInstance);
         try {
-          // $FlowFixMe[object-this-reference] found when upgrading Flow
           const result = fn.apply(this, args);
 
           const nextChildren = getChildren(internalInstance);
@@ -285,7 +279,6 @@ export function attach(
           parentIDStack.pop();
           return result;
         } catch (err) {
-          // $FlowFixMe[incompatible-type] found when upgrading Flow
           parentIDStack = [];
           throw err;
         } finally {
@@ -301,7 +294,6 @@ export function attach(
       receiveComponent(fn, args) {
         const internalInstance = args[0];
         if (getElementType(internalInstance) === ElementTypeOtherOrUnknown) {
-          // $FlowFixMe[object-this-reference] found when upgrading Flow
           return fn.apply(this, args);
         }
 
@@ -310,7 +302,6 @@ export function attach(
 
         const prevChildren = getChildren(internalInstance);
         try {
-          // $FlowFixMe[object-this-reference] found when upgrading Flow
           const result = fn.apply(this, args);
 
           const nextChildren = getChildren(internalInstance);
@@ -322,7 +313,6 @@ export function attach(
           parentIDStack.pop();
           return result;
         } catch (err) {
-          // $FlowFixMe[incompatible-type] found when upgrading Flow
           parentIDStack = [];
           throw err;
         } finally {
@@ -338,14 +328,12 @@ export function attach(
       unmountComponent(fn, args) {
         const internalInstance = args[0];
         if (getElementType(internalInstance) === ElementTypeOtherOrUnknown) {
-          // $FlowFixMe[object-this-reference] found when upgrading Flow
           return fn.apply(this, args);
         }
 
         const id = getID(internalInstance);
         parentIDStack.push(id);
         try {
-          // $FlowFixMe[object-this-reference] found when upgrading Flow
           const result = fn.apply(this, args);
           parentIDStack.pop();
 
@@ -354,7 +342,6 @@ export function attach(
 
           return result;
         } catch (err) {
-          // $FlowFixMe[incompatible-type] found when upgrading Flow
           parentIDStack = [];
           throw err;
         } finally {

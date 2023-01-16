@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -15,6 +15,7 @@ import {
   memo,
   Component,
   Fragment,
+  // $FlowFixMe Flow doesn't know about the Profiler import yet
   Profiler,
   StrictMode,
   Suspense,
@@ -53,7 +54,7 @@ const LazyComponent = lazy(() =>
   }),
 );
 
-export default function ElementTypes(): React.Node {
+export default function ElementTypes() {
   return (
     <Profiler id="test" onRender={() => {}}>
       <Fragment>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -13,10 +13,7 @@ import type {Element} from './views/Components/types';
 import type {StateContext} from './views/Components/TreeContext';
 import type Store from './store';
 
-export function printElement(
-  element: Element,
-  includeWeight: boolean = false,
-): string {
+export function printElement(element: Element, includeWeight: boolean = false) {
   let prefix = ' ';
   if (element.children.length > 0) {
     prefix = element.isCollapsed ? '▸' : '▾';
@@ -47,7 +44,7 @@ export function printElement(
 export function printOwnersList(
   elements: Array<Element>,
   includeWeight: boolean = false,
-): string {
+) {
   return elements
     .map(element => printElement(element, includeWeight))
     .join('\n');
@@ -57,7 +54,7 @@ export function printStore(
   store: Store,
   includeWeight: boolean = false,
   state: StateContext | null = null,
-): string {
+) {
   const snapshotLines = [];
 
   let rootWeight = 0;
@@ -149,7 +146,7 @@ export function printStore(
 // We use JSON.parse to parse string values
 // e.g. 'foo' is not valid JSON but it is a valid string
 // so this method replaces e.g. 'foo' with "foo"
-export function sanitizeForParse(value: any): any | string {
+export function sanitizeForParse(value: any) {
   if (typeof value === 'string') {
     if (
       value.length >= 2 &&
@@ -162,7 +159,7 @@ export function sanitizeForParse(value: any): any | string {
   return value;
 }
 
-export function smartParse(value: any): any | void | number {
+export function smartParse(value: any) {
   switch (value) {
     case 'Infinity':
       return Infinity;
@@ -175,7 +172,7 @@ export function smartParse(value: any): any | void | number {
   }
 }
 
-export function smartStringify(value: any): string {
+export function smartStringify(value: any) {
   if (typeof value === 'number') {
     if (Number.isNaN(value)) {
       return 'NaN';
@@ -187,29 +184,4 @@ export function smartStringify(value: any): string {
   }
 
   return JSON.stringify(value);
-}
-
-// [url, row, column]
-export type Stack = [string, number, number];
-
-const STACK_DELIMETER = /\n\s+at /;
-const STACK_SOURCE_LOCATION = /([^\s]+) \((.+):(.+):(.+)\)/;
-
-export function stackToComponentSources(
-  stack: string,
-): Array<[string, ?Stack]> {
-  const out = [];
-  stack
-    .split(STACK_DELIMETER)
-    .slice(1)
-    .forEach(entry => {
-      const match = STACK_SOURCE_LOCATION.exec(entry);
-      if (match) {
-        const [, component, url, row, column] = match;
-        out.push([component, [url, parseInt(row, 10), parseInt(column, 10)]]);
-      } else {
-        out.push([entry, null]);
-      }
-    });
-  return out;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -28,17 +28,13 @@ export type IconType =
   | 'strict-mode-non-compliant'
   | 'warning';
 
-type Props = {
+type Props = {|
   className?: string,
   title?: string,
   type: IconType,
-};
+|};
 
-export default function Icon({
-  className = '',
-  title = '',
-  type,
-}: Props): React.Node {
+export default function Icon({className = '', title = '', type}: Props) {
   let pathData = null;
   switch (type) {
     case 'arrow':

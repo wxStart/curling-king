@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -7,12 +7,9 @@
  * @flow
  */
 
-import type {Fiber, FiberRoot} from 'react-reconciler/src/ReactInternalTypes';
-import type {
-  PublicInstance,
-  Instance,
-  TextInstance,
-} from './ReactTestHostConfig';
+import type {Fiber} from 'react-reconciler/src/ReactInternalTypes';
+import type {FiberRoot} from 'react-reconciler/src/ReactInternalTypes';
+import type {Instance, TextInstance} from './ReactTestHostConfig';
 
 import * as React from 'react';
 import * as Scheduler from 'scheduler/unstable_mock';
@@ -30,8 +27,6 @@ import {
   FunctionComponent,
   ClassComponent,
   HostComponent,
-  HostResource,
-  HostSingleton,
   HostPortal,
   HostText,
   HostRoot,
@@ -66,12 +61,12 @@ type TestRendererOptions = {
   ...
 };
 
-type ReactTestRendererJSON = {
+type ReactTestRendererJSON = {|
   type: string,
   props: {[propName: string]: any, ...},
   children: null | Array<ReactTestRendererNode>,
-  $$typeof?: symbol, // Optional because we add it with defineProperty().
-};
+  $$typeof?: Symbol, // Optional because we add it with defineProperty().
+|};
 type ReactTestRendererNode = ReactTestRendererJSON | string;
 
 type FindOptions = $Shape<{
@@ -201,8 +196,6 @@ function toTree(node: ?Fiber) {
         instance: null,
         rendered: childrenToTree(node.child),
       };
-    case HostResource:
-    case HostSingleton:
     case HostComponent: {
       return {
         nodeType: 'host',
@@ -308,20 +301,15 @@ class ReactTestInstance {
     this._fiber = fiber;
   }
 
-  get instance(): $FlowFixMe {
-    const tag = this._fiber.tag;
-    if (
-      tag === HostComponent ||
-      tag === HostResource ||
-      tag === HostSingleton
-    ) {
+  get instance() {
+    if (this._fiber.tag === HostComponent) {
       return getPublicInstance(this._fiber.stateNode);
     } else {
       return this._fiber.stateNode;
     }
   }
 
-  get type(): any {
+  get type() {
     return this._fiber.type;
   }
 
@@ -455,26 +443,13 @@ function onRecoverableError(error) {
   console.error(error);
 }
 
-function create(
-  element: React$Element<any>,
-  options: TestRendererOptions,
-): {
-  _Scheduler: typeof Scheduler,
-  root: void,
-  toJSON(): Array<ReactTestRendererNode> | ReactTestRendererNode | null,
-  toTree(): mixed,
-  update(newElement: React$Element<any>): any,
-  unmount(): void,
-  getInstance(): React$Component<any, any> | PublicInstance | null,
-  unstable_flushSync: typeof flushSync,
-} {
+function create(element: React$Element<any>, options: TestRendererOptions) {
   let createNodeMock = defaultTestOptions.createNodeMock;
   let isConcurrent = false;
   let isStrictMode = false;
   let concurrentUpdatesByDefault = null;
   if (typeof options === 'object' && options !== null) {
     if (typeof options.createNodeMock === 'function') {
-      // $FlowFixMe[incompatible-type] found when upgrading Flow
       createNodeMock = options.createNodeMock;
     }
     if (options.unstable_isConcurrent === true) {
@@ -557,7 +532,7 @@ function create(
       }
       return toTree(root.current);
     },
-    update(newElement: React$Element<any>): number | void {
+    update(newElement: React$Element<any>) {
       if (root == null || root.current == null) {
         return;
       }
@@ -568,7 +543,6 @@ function create(
         return;
       }
       updateContainer(null, root, null, null);
-      // $FlowFixMe[incompatible-type] found when upgrading Flow
       container = null;
       root = null;
     },
@@ -601,7 +575,6 @@ function create(
         } else {
           // However, we give you the root if there's more than one root child.
           // We could make this the behavior for all cases but it would be a breaking change.
-          // $FlowFixMe[incompatible-use] found when upgrading Flow
           return wrapFiber(root.current);
         }
       },

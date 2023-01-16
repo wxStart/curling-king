@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -24,7 +24,7 @@ const INSTRUCTIONS_FB_URL =
   'https://fb.me/devtools-unsupported-bridge-protocol';
 const MODAL_DIALOG_ID = 'UnsupportedBridgeProtocolDialog';
 
-export default function UnsupportedBridgeProtocolDialog(_: {}): null {
+export default function UnsupportedBridgeProtocolDialog(_: {||}) {
   const {dialogs, dispatch} = useContext(ModalDialogContext);
   const store = useContext(StoreContext);
 
@@ -66,9 +66,9 @@ export default function UnsupportedBridgeProtocolDialog(_: {}): null {
 
 function DialogContent({
   unsupportedBridgeProtocol,
-}: {
+}: {|
   unsupportedBridgeProtocol: BridgeProtocol,
-}) {
+|}) {
   const {version, minNpmVersion, maxNpmVersion} = unsupportedBridgeProtocol;
 
   let instructions;

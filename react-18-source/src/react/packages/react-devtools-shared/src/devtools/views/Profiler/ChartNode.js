@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -11,21 +11,21 @@ import * as React from 'react';
 
 import styles from './ChartNode.css';
 
-type Props = {
+type Props = {|
   color: string,
   height: number,
   isDimmed?: boolean,
   label: string,
-  onClick: (event: SyntheticMouseEvent<any>) => mixed,
-  onDoubleClick?: (event: SyntheticMouseEvent<any>) => mixed,
-  onMouseEnter: (event: SyntheticMouseEvent<any>) => mixed,
-  onMouseLeave: (event: SyntheticMouseEvent<any>) => mixed,
+  onClick: (event: SyntheticMouseEvent<*>) => mixed,
+  onDoubleClick?: (event: SyntheticMouseEvent<*>) => mixed,
+  onMouseEnter: (event: SyntheticMouseEvent<*>) => mixed,
+  onMouseLeave: (event: SyntheticMouseEvent<*>) => mixed,
   placeLabelAboveNode?: boolean,
   textStyle?: Object,
   width: number,
   x: number,
   y: number,
-};
+|};
 
 const minWidthToDisplay = 35;
 
@@ -42,7 +42,7 @@ export default function ChartNode({
   width,
   x,
   y,
-}: Props): React.Node {
+}: Props) {
   return (
     <g className={styles.Group} transform={`translate(${x},${y})`}>
       <rect

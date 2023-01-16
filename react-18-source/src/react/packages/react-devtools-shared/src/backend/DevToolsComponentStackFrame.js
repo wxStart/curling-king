@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -12,6 +12,7 @@
 // while still maintaining support for multiple renderer versions
 // (which use different values for ReactTypeOfWork).
 
+import type {Source} from 'shared/ReactElementType';
 import type {LazyComponent} from 'react/src/ReactLazy';
 import type {CurrentDispatcherRef} from './types';
 
@@ -35,6 +36,7 @@ import {disableLogs, reenableLogs} from './DevToolsConsolePatching';
 let prefix;
 export function describeBuiltInComponentFrame(
   name: string,
+  source: void | null | Source,
   ownerFn: void | null | Function,
 ): string {
   if (prefix === undefined) {
@@ -121,7 +123,6 @@ export function describeNativeComponentFrame(
         } catch (x) {
           control = x;
         }
-        // $FlowFixMe[prop-missing] found when upgrading Flow
         fn.call(Fake.prototype);
       }
     } else {
@@ -203,6 +204,7 @@ export function describeNativeComponentFrame(
 
 export function describeClassComponentFrame(
   ctor: Function,
+  source: void | null | Source,
   ownerFn: void | null | Function,
   currentDispatcherRef: CurrentDispatcherRef,
 ): string {
@@ -211,6 +213,7 @@ export function describeClassComponentFrame(
 
 export function describeFunctionComponentFrame(
   fn: Function,
+  source: void | null | Source,
   ownerFn: void | null | Function,
   currentDispatcherRef: CurrentDispatcherRef,
 ): string {
@@ -224,6 +227,7 @@ function shouldConstruct(Component: Function) {
 
 export function describeUnknownElementTypeFrameInDEV(
   type: any,
+  source: void | null | Source,
   ownerFn: void | null | Function,
   currentDispatcherRef: CurrentDispatcherRef,
 ): string {
@@ -241,15 +245,15 @@ export function describeUnknownElementTypeFrameInDEV(
     );
   }
   if (typeof type === 'string') {
-    return describeBuiltInComponentFrame(type, ownerFn);
+    return describeBuiltInComponentFrame(type, source, ownerFn);
   }
   switch (type) {
     case SUSPENSE_NUMBER:
     case SUSPENSE_SYMBOL_STRING:
-      return describeBuiltInComponentFrame('Suspense', ownerFn);
+      return describeBuiltInComponentFrame('Suspense', source, ownerFn);
     case SUSPENSE_LIST_NUMBER:
     case SUSPENSE_LIST_SYMBOL_STRING:
-      return describeBuiltInComponentFrame('SuspenseList', ownerFn);
+      return describeBuiltInComponentFrame('SuspenseList', source, ownerFn);
   }
   if (typeof type === 'object') {
     switch (type.$$typeof) {
@@ -257,6 +261,7 @@ export function describeUnknownElementTypeFrameInDEV(
       case FORWARD_REF_SYMBOL_STRING:
         return describeFunctionComponentFrame(
           type.render,
+          source,
           ownerFn,
           currentDispatcherRef,
         );
@@ -265,6 +270,7 @@ export function describeUnknownElementTypeFrameInDEV(
         // Memo may contain any component type so we recursively resolve it.
         return describeUnknownElementTypeFrameInDEV(
           type.type,
+          source,
           ownerFn,
           currentDispatcherRef,
         );
@@ -277,6 +283,7 @@ export function describeUnknownElementTypeFrameInDEV(
           // Lazy may contain any component type so we recursively resolve it.
           return describeUnknownElementTypeFrameInDEV(
             init(payload),
+            source,
             ownerFn,
             currentDispatcherRef,
           );

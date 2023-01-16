@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -33,12 +33,9 @@ import type {Element} from 'react-devtools-shared/src/devtools/views/Components/
 import type {Element as ReactElement} from 'react';
 import type {FrontendBridge} from 'react-devtools-shared/src/bridge';
 
-// $FlowFixMe[method-unbinding]
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-
 type Type = 'props' | 'state' | 'context' | 'hooks';
 
-type KeyValueProps = {
+type KeyValueProps = {|
   alphaSort: boolean,
   bridge: FrontendBridge,
   canDeletePaths: boolean,
@@ -57,7 +54,7 @@ type KeyValueProps = {
   pathRoot: Type,
   store: Store,
   value: any,
-};
+|};
 
 export default function KeyValue({
   alphaSort,
@@ -78,7 +75,7 @@ export default function KeyValue({
   pathRoot,
   store,
   value,
-}: KeyValueProps): React.Node {
+}: KeyValueProps) {
   const {readOnly: readOnlyGlobalFlag} = useContext(OptionsContext);
   canDeletePaths = !readOnlyGlobalFlag && canDeletePaths;
   canEditValues = !readOnlyGlobalFlag && canEditValues;
@@ -411,7 +408,7 @@ export default function KeyValue({
       const hasChildren = entries.length > 0 || canEditValues;
       const displayName = getMetaValueLabel(value);
 
-      children = entries.map(([key, keyValue]): ReactElement<any> => (
+      children = entries.map<ReactElement<any>>(([key, keyValue]) => (
         <KeyValue
           key={key}
           alphaSort={alphaSort}

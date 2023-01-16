@@ -1,16 +1,17 @@
 import * as React from 'react';
 import {Suspense} from 'react';
-import ReactDOM from 'react-dom/client';
-import ReactServerDOMReader from 'react-server-dom-webpack/client';
+import ReactDOM from 'react-dom';
+import ReactServerDOMReader from 'react-server-dom-webpack';
 
 let data = ReactServerDOMReader.createFromFetch(fetch('http://localhost:3001'));
 
 function Content() {
-  return React.use(data);
+  return data.readRoot();
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.render(
   <Suspense fallback={<h1>Loading...</h1>}>
     <Content />
-  </Suspense>
+  </Suspense>,
+  document.getElementById('root')
 );

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -102,7 +102,7 @@ class FlamechartStackLayerView extends View {
     };
   }
 
-  desiredSize(): Size {
+  desiredSize() {
     return this._intrinsicSize;
   }
 
@@ -342,12 +342,7 @@ export class FlamechartView extends View {
     this._flamechartRowViews.forEach(rowView => (rowView._onHover = onHover));
   }
 
-  desiredSize(): {
-    height: number,
-    hideScrollBarIfLessThanHeight?: number,
-    maxInitialHeight?: number,
-    width: number,
-  } {
+  desiredSize() {
     // Ignore the wishes of the background color view
     const intrinsicSize = this._verticalStackView.desiredSize();
     return {

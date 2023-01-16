@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -29,7 +29,9 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     Scheduler = require('scheduler');
     React = require('react');
     ReactDOMClient = require('react-dom/client');
-    ReactDOMFizzServer = require('react-dom/server');
+    if (__EXPERIMENTAL__) {
+      ReactDOMFizzServer = require('react-dom/server');
+    }
     Stream = require('stream');
 
     // Test Environment
@@ -125,6 +127,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
       : children;
   }
 
+  // @gate experimental
   it('suppresses and fixes text mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -164,6 +167,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('suppresses and fixes multiple text node mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -205,6 +209,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('errors on text-to-element mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -256,6 +261,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('suppresses and fixes client-only single text node mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -291,7 +297,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
   });
 
   // TODO: This behavior is not consistent with client-only single text node.
-
+  // @gate experimental
   it('errors on server-only single text node mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -337,6 +343,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('errors on client-only extra text node mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -388,6 +395,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('errors on server-only extra text node mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -438,6 +446,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('errors on element-to-text mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -490,6 +499,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('suppresses and does not fix attribute mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -528,6 +538,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('suppresses and does not fix html mismatches with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -565,6 +576,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('errors on insertions with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (
@@ -610,6 +622,7 @@ describe('ReactDOMFizzServerHydrationWarning', () => {
     );
   });
 
+  // @gate experimental
   it('errors on deletions with suppressHydrationWarning', async () => {
     function App({isClient}) {
       return (

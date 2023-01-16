@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -13,17 +13,17 @@ import ButtonIcon from '../ButtonIcon';
 
 import styles from './ExpandCollapseToggle.css';
 
-type ExpandCollapseToggleProps = {
+type ExpandCollapseToggleProps = {|
   disabled: boolean,
   isOpen: boolean,
   setIsOpen: Function,
-};
+|};
 
 export default function ExpandCollapseToggle({
   disabled,
   isOpen,
   setIsOpen,
-}: ExpandCollapseToggleProps): React.Node {
+}: ExpandCollapseToggleProps) {
   return (
     <Button
       className={styles.ExpandCollapseToggle}

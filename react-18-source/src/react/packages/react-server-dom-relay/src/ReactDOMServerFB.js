@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -12,7 +12,6 @@ import type {ReactNodeList} from 'shared/ReactTypes';
 import type {Request} from 'react-server/src/ReactFizzServer';
 
 import type {Destination} from 'react-server/src/ReactServerStreamConfig';
-import type {BootstrapScriptDescriptor} from 'react-dom-bindings/src/server/ReactDOMServerFormatConfig';
 
 import {
   createRequest,
@@ -34,7 +33,6 @@ type Options = {
   bootstrapModules: Array<string>,
   progressiveChunkSize?: number,
   onError: (error: mixed) => void,
-  unstable_externalRuntimeSrc?: string | BootstrapScriptDescriptor,
 };
 
 opaque type Stream = {
@@ -57,7 +55,6 @@ function renderToStream(children: ReactNodeList, options: Options): Stream {
       options ? options.bootstrapScriptContent : undefined,
       options ? options.bootstrapScripts : undefined,
       options ? options.bootstrapModules : undefined,
-      options ? options.unstable_externalRuntimeSrc : undefined,
     ),
     createRootFormatContext(undefined),
     options ? options.progressiveChunkSize : undefined,

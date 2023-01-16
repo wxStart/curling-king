@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -11,7 +11,6 @@ import {
   getDisplayName,
   getDisplayNameForReactElement,
 } from 'react-devtools-shared/src/utils';
-import {stackToComponentSources} from 'react-devtools-shared/src/devtools/utils';
 import {
   format,
   formatWithStyles,
@@ -53,23 +52,6 @@ describe('utils', () => {
     it('should return a fallback when the name prop is not a string', () => {
       const FauxComponent = {name: {}};
       expect(getDisplayName(FauxComponent, 'Fallback')).toEqual('Fallback');
-    });
-
-    it('should parse a component stack trace', () => {
-      expect(
-        stackToComponentSources(`
-    at Foobar (http://localhost:3000/static/js/bundle.js:103:74)
-    at a
-    at header
-    at div
-    at App`),
-      ).toEqual([
-        ['Foobar', ['http://localhost:3000/static/js/bundle.js', 103, 74]],
-        ['a', null],
-        ['header', null],
-        ['div', null],
-        ['App', null],
-      ]);
     });
   });
 

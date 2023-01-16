@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -67,9 +67,6 @@ export const prepareScopeUpdate = $$$hostConfig.prepareScopeUpdate;
 export const getInstanceFromScope = $$$hostConfig.getInstanceFromScope;
 export const getCurrentEventPriority = $$$hostConfig.getCurrentEventPriority;
 export const detachDeletedInstance = $$$hostConfig.detachDeletedInstance;
-export const requestPostPaintCallback = $$$hostConfig.requestPostPaintCallback;
-export const prepareRendererToRender = $$$hostConfig.prepareRendererToRender;
-export const resetRendererAfterRender = $$$hostConfig.resetRendererAfterRender;
 
 // -------------------
 //      Microtasks
@@ -130,7 +127,6 @@ export const cloneHiddenTextInstance = $$$hostConfig.cloneHiddenTextInstance;
 //     Hydration
 //     (optional)
 // -------------------
-export const isHydratable = $$$hostConfig.isHydratable;
 export const canHydrateInstance = $$$hostConfig.canHydrateInstance;
 export const canHydrateTextInstance = $$$hostConfig.canHydrateTextInstance;
 export const canHydrateSuspenseInstance =
@@ -190,24 +186,3 @@ export const didNotFindHydratableTextInstance =
 export const didNotFindHydratableSuspenseInstance =
   $$$hostConfig.didNotFindHydratableSuspenseInstance;
 export const errorHydratingContainer = $$$hostConfig.errorHydratingContainer;
-
-// -------------------
-//     Resources
-//     (optional)
-// -------------------
-export const supportsResources = $$$hostConfig.supportsResources;
-export const isHostResourceType = $$$hostConfig.isHostResourceType;
-export const getResource = $$$hostConfig.getResource;
-export const acquireResource = $$$hostConfig.acquireResource;
-export const releaseResource = $$$hostConfig.releaseResource;
-
-// -------------------
-//     Singletons
-//     (optional)
-// -------------------
-export const supportsSingletons = $$$hostConfig.supportsSingletons;
-export const resolveSingletonInstance = $$$hostConfig.resolveSingletonInstance;
-export const clearSingleton = $$$hostConfig.clearSingleton;
-export const acquireSingletonInstance = $$$hostConfig.acquireSingletonInstance;
-export const releaseSingletonInstance = $$$hostConfig.releaseSingletonInstance;
-export const isHostSingletonType = $$$hostConfig.isHostSingletonType;

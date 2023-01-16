@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -62,7 +62,7 @@ declare module 'ReactFlightDOMRelayClientIntegration' {
   ): JSResourceReference<T>;
   declare export function preloadModule<T>(
     moduleReference: JSResourceReference<T>,
-  ): null | Promise<void>;
+  ): void;
   declare export function requireModule<T>(
     moduleReference: JSResourceReference<T>,
   ): T;
@@ -95,7 +95,7 @@ declare module 'ReactFlightNativeRelayClientIntegration' {
   ): JSResourceReference<T>;
   declare export function preloadModule<T>(
     moduleReference: JSResourceReference<T>,
-  ): null | Promise<void>;
+  ): void;
   declare export function requireModule<T>(
     moduleReference: JSResourceReference<T>,
   ): T;

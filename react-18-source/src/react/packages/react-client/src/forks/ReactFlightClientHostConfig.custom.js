@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -26,14 +26,14 @@
 declare var $$$hostConfig: any;
 
 export type Response = any;
-export opaque type BundlerConfig = mixed;
-export opaque type ModuleMetaData = mixed;
-export opaque type ModuleReference<T> = mixed; // eslint-disable-line no-unused-vars
+export opaque type BundlerConfig = mixed; // eslint-disable-line no-undef
+export opaque type ModuleMetaData = mixed; // eslint-disable-line no-undef
+export opaque type ModuleReference<T> = mixed; // eslint-disable-line no-undef
 export const resolveModuleReference = $$$hostConfig.resolveModuleReference;
 export const preloadModule = $$$hostConfig.preloadModule;
 export const requireModule = $$$hostConfig.requireModule;
 
-export opaque type Source = mixed;
+export opaque type Source = mixed; // eslint-disable-line no-undef
 
 export type UninitializedModel = string;
 export const parseModel = $$$hostConfig.parseModel;

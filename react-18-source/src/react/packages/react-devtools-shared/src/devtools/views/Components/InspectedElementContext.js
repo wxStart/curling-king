@@ -1,13 +1,11 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
  * @flow
  */
-
-import type {ReactContext} from 'shared/ReactTypes';
 
 import * as React from 'react';
 import {
@@ -49,27 +47,25 @@ type Path = Array<string | number>;
 type InspectPathFunction = (path: Path) => void;
 export type ToggleParseHookNames = () => void;
 
-type Context = {
+type Context = {|
   hookNames: HookNames | null,
   inspectedElement: InspectedElement | null,
   inspectPaths: InspectPathFunction,
   parseHookNames: boolean,
   toggleParseHookNames: ToggleParseHookNames,
-};
+|};
 
-export const InspectedElementContext: ReactContext<Context> = createContext<Context>(
+export const InspectedElementContext = createContext<Context>(
   ((null: any): Context),
 );
 
 const POLL_INTERVAL = 1000;
 
-export type Props = {
+export type Props = {|
   children: ReactNodeList,
-};
+|};
 
-export function InspectedElementContextController({
-  children,
-}: Props): React.Node {
+export function InspectedElementContextController({children}: Props) {
   const {selectedElementID} = useContext(TreeStateContext);
   const fetchFileWithCaching = useContext(FetchFileWithCachingContext);
   const bridge = useContext(BridgeContext);
@@ -88,10 +84,10 @@ export function InspectedElementContextController({
   // The transition that updates this causes the component to re-render and ask the cache->backend for the new path.
   // When a path is sent along with an "inspectElement" request,
   // the backend knows to send its dehydrated data even if the element hasn't updated since the last request.
-  const [state, setState] = useState<{
+  const [state, setState] = useState<{|
     element: Element | null,
     path: Array<number | string> | null,
-  }>({
+  |}>({
     element: null,
     path: null,
   });

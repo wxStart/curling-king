@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -41,18 +41,18 @@ type ResizeActionType =
   | 'ACTION_SET_HORIZONTAL_PERCENTAGE'
   | 'ACTION_SET_VERTICAL_PERCENTAGE';
 
-type ResizeAction = {
+type ResizeAction = {|
   type: ResizeActionType,
   payload: any,
-};
+|};
 
-type ResizeState = {
+type ResizeState = {|
   horizontalPercentage: number,
   isResizing: boolean,
   verticalPercentage: number,
-};
+|};
 
-function Components(_: {}) {
+function Components(_: {||}) {
   const wrapperElementRef = useRef<null | HTMLElement>(null);
   const resizeElementRef = useRef<null | HTMLElement>(null);
 
@@ -258,6 +258,4 @@ function setResizeCSSVariable(
   }
 }
 
-export default (portaledContent(
-  Components,
-): React$StatelessFunctionalComponent<{}>);
+export default portaledContent(Components);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -292,7 +292,7 @@ describe('act warnings', () => {
   });
 
   // @gate __DEV__
-  // @gate enableLegacyCache
+  // @gate enableCache
   test('warns if Suspense retry is not wrapped', () => {
     function App() {
       return (
@@ -322,7 +322,7 @@ describe('act warnings', () => {
   });
 
   // @gate __DEV__
-  // @gate enableLegacyCache
+  // @gate enableCache
   test('warns if Suspense ping is not wrapped', () => {
     function App({showMore}) {
       return (

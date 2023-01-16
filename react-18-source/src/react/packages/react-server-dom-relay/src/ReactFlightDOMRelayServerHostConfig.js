@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -60,48 +60,16 @@ export function resolveModuleMetaData<T>(
 
 export type Chunk = RowEncoding;
 
-export function processErrorChunkProd(
+export function processErrorChunk(
   request: Request,
   id: number,
-  digest: string,
-): Chunk {
-  if (__DEV__) {
-    // These errors should never make it into a build so we don't need to encode them in codes.json
-    // eslint-disable-next-line react-internal/prod-error-codes
-    throw new Error(
-      'processErrorChunkProd should never be called while in development mode. Use processErrorChunkDev instead. This is a bug in React.',
-    );
-  }
-
-  return [
-    'E',
-    id,
-    {
-      digest,
-    },
-  ];
-}
-
-export function processErrorChunkDev(
-  request: Request,
-  id: number,
-  digest: string,
   message: string,
   stack: string,
 ): Chunk {
-  if (!__DEV__) {
-    // These errors should never make it into a build so we don't need to encode them in codes.json
-    // eslint-disable-next-line react-internal/prod-error-codes
-    throw new Error(
-      'processErrorChunkDev should never be called while in production mode. Use processErrorChunkProd instead. This is a bug in React.',
-    );
-  }
-
   return [
     'E',
     id,
     {
-      digest,
       message,
       stack,
     },
@@ -123,8 +91,6 @@ function convertModelToJSON(
       }
       return jsonArray;
     } else {
-      /* $FlowFixMe the old version of Flow doesn't have a good way to define
-       * an empty exact object. */
       const jsonObj: {[key: string]: JSONValue} = {};
       for (const nextKey in json) {
         if (hasOwnProperty.call(json, nextKey)) {
@@ -147,17 +113,8 @@ export function processModelChunk(
   id: number,
   model: ReactModel,
 ): Chunk {
-  // $FlowFixMe no good way to define an empty exact object
   const json = convertModelToJSON(request, {}, '', model);
   return ['J', id, json];
-}
-
-export function processReferenceChunk(
-  request: Request,
-  id: number,
-  reference: string,
-): Chunk {
-  return ['J', id, reference];
 }
 
 export function processModuleChunk(
@@ -191,15 +148,9 @@ export function scheduleWork(callback: () => void) {
 
 export function flushBuffered(destination: Destination) {}
 
-export const supportsRequestStorage = false;
-export const requestStorage: AsyncLocalStorage<
-  Map<Function, mixed>,
-> = (null: any);
-
 export function beginWriting(destination: Destination) {}
 
 export function writeChunk(destination: Destination, chunk: Chunk): void {
-  // $FlowFixMe `Chunk` doesn't flow into `JSONValue` because of the `E` row type.
   emitRow(destination, chunk);
 }
 
@@ -207,7 +158,6 @@ export function writeChunkAndReturn(
   destination: Destination,
   chunk: Chunk,
 ): boolean {
-  // $FlowFixMe `Chunk` doesn't flow into `JSONValue` because of the `E` row type.
   emitRow(destination, chunk);
   return true;
 }

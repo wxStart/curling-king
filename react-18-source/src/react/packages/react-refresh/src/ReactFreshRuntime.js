@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -21,19 +21,19 @@ import type {ReactNodeList} from 'shared/ReactTypes';
 
 import {REACT_MEMO_TYPE, REACT_FORWARD_REF_TYPE} from 'shared/ReactSymbols';
 
-type Signature = {
+type Signature = {|
   ownKey: string,
   forceReset: boolean,
   fullKey: string | null, // Contains keys of nested Hooks. Computed lazily.
   getCustomHooks: () => Array<Function>,
-};
+|};
 
-type RendererHelpers = {
+type RendererHelpers = {|
   findHostInstancesForRefresh: FindHostInstancesForRefresh,
   scheduleRefresh: ScheduleRefresh,
   scheduleRoot: ScheduleRoot,
   setRefreshHandler: SetRefreshHandler,
-};
+|};
 
 if (!__DEV__) {
   throw new Error(
@@ -47,16 +47,15 @@ const PossiblyWeakMap = typeof WeakMap === 'function' ? WeakMap : Map;
 // We never remove these associations.
 // It's OK to reference families, but use WeakMap/Set for types.
 const allFamiliesByID: Map<string, Family> = new Map();
-const allFamiliesByType:
-  | WeakMap<any, Family>
-  | Map<any, Family> = new PossiblyWeakMap();
-const allSignaturesByType: // $FlowFixMe
+const allFamiliesByType: // $FlowIssue
+WeakMap<any, Family> | Map<any, Family> = new PossiblyWeakMap();
+const allSignaturesByType: // $FlowIssue
 WeakMap<any, Signature> | Map<any, Signature> = new PossiblyWeakMap();
 // This WeakMap is read by React, so we only put families
 // that have actually been edited here. This keeps checks fast.
-const updatedFamiliesByType:
-  | WeakMap<any, Family>
-  | Map<any, Family> = new PossiblyWeakMap();
+// $FlowIssue
+const updatedFamiliesByType: // $FlowIssue
+WeakMap<any, Family> | Map<any, Family> = new PossiblyWeakMap();
 
 // This is cleared on every performReactRefresh() call.
 // It is an array of [Family, NextType] tuples.
@@ -75,7 +74,8 @@ const failedRoots: Set<FiberRoot> = new Set();
 // In environments that support WeakMap, we also remember the last element for every root.
 // It needs to be weak because we do this even for roots that failed to mount.
 // If there is no WeakMap, we won't attempt to do retrying.
-const rootElements: WeakMap<any, ReactNodeList> | null =
+// $FlowIssue
+const rootElements: WeakMap<any, ReactNodeList> | null = // $FlowIssue
   typeof WeakMap === 'function' ? new WeakMap() : null;
 
 let isPerformingRefresh = false;
@@ -460,18 +460,20 @@ export function injectIntoGlobalHook(globalObject: any): void {
       globalObject.__REACT_DEVTOOLS_GLOBAL_HOOK__ = hook = {
         renderers: new Map(),
         supportsFiber: true,
-        inject: injected => nextID++,
-        onScheduleFiberRoot: (
+        inject(injected) {
+          return nextID++;
+        },
+        onScheduleFiberRoot(
           id: number,
           root: FiberRoot,
           children: ReactNodeList,
-        ) => {},
-        onCommitFiberRoot: (
+        ) {},
+        onCommitFiberRoot(
           id: number,
           root: FiberRoot,
           maybePriorityLevel: mixed,
           didError: boolean,
-        ) => {},
+        ) {},
         onCommitFiberUnmount() {},
       };
     }
@@ -597,13 +599,13 @@ export function injectIntoGlobalHook(globalObject: any): void {
   }
 }
 
-export function hasUnrecoverableErrors(): boolean {
+export function hasUnrecoverableErrors() {
   // TODO: delete this after removing dependency in RN.
   return false;
 }
 
 // Exposed for testing.
-export function _getMountedRootCount(): number {
+export function _getMountedRootCount() {
   if (__DEV__) {
     return mountedRoots.size;
   } else {
@@ -635,12 +637,7 @@ export function _getMountedRootCount(): number {
 //   'useState{[foo, setFoo]}(0)',
 //   () => [useCustomHook], /* Lazy to avoid triggering inline requires */
 // );
-export function createSignatureFunctionForTransform(): <T>(
-  type: T,
-  key: string,
-  forceReset?: boolean,
-  getCustomHooks?: () => Array<Function>,
-) => T | void {
+export function createSignatureFunctionForTransform() {
   if (__DEV__) {
     let savedType;
     let hasCustomHooks;
@@ -657,7 +654,6 @@ export function createSignatureFunctionForTransform(): <T>(
         // in HOC chains like _s(hoc1(_s(hoc2(_s(actualFunction))))).
         if (!savedType) {
           // We're in the innermost call, so this is the actual type.
-          // $FlowFixMe[escaped-generic] discovered when updating Flow
           savedType = type;
           hasCustomHooks = typeof getCustomHooks === 'function';
         }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -21,7 +21,7 @@ import SymbolKeys from './SymbolKeys';
 
 // TODO Add Immutable JS example
 
-export default function InspectableElements(): React.Node {
+export default function InspectableElements() {
   return (
     <Fragment>
       <h1>Inspectable elements</h1>

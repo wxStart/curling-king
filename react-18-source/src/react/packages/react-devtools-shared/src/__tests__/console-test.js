@@ -1,14 +1,11 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
  * @flow
  */
-
-import {normalizeCodeLocInfo} from './utils';
-
 let React;
 let ReactDOMClient;
 let act;
@@ -16,8 +13,6 @@ let fakeConsole;
 let legacyRender;
 let mockError;
 let mockInfo;
-let mockGroup;
-let mockGroupCollapsed;
 let mockLog;
 let mockWarn;
 let patchConsole;
@@ -27,7 +22,6 @@ let rendererID;
 describe('console', () => {
   beforeEach(() => {
     const Console = require('react-devtools-shared/src/backend/console');
-
     patchConsole = Console.patch;
     unpatchConsole = Console.unpatch;
 
@@ -36,8 +30,6 @@ describe('console', () => {
     // because Jest itself has hooks into it as does our test env setup.
     mockError = jest.fn();
     mockInfo = jest.fn();
-    mockGroup = jest.fn();
-    mockGroupCollapsed = jest.fn();
     mockLog = jest.fn();
     mockWarn = jest.fn();
     fakeConsole = {
@@ -45,8 +37,6 @@ describe('console', () => {
       info: mockInfo,
       log: mockLog,
       warn: mockWarn,
-      group: mockGroup,
-      groupCollapsed: mockGroupCollapsed,
     };
 
     Console.dangerous_setTargetConsoleForTesting(fakeConsole);
@@ -70,14 +60,21 @@ describe('console', () => {
     legacyRender = utils.legacyRender;
   });
 
+  function normalizeCodeLocInfo(str) {
+    return (
+      str &&
+      str.replace(/\n +(?:at|in) ([\S]+)[^\n]*/g, function(m, name) {
+        return '\n    in ' + name + ' (at **)';
+      })
+    );
+  }
+
   // @reactVersion >=18.0
   it('should not patch console methods that are not explicitly overridden', () => {
     expect(fakeConsole.error).not.toBe(mockError);
     expect(fakeConsole.info).toBe(mockInfo);
     expect(fakeConsole.log).toBe(mockLog);
     expect(fakeConsole.warn).not.toBe(mockWarn);
-    expect(fakeConsole.group).toBe(mockGroup);
-    expect(fakeConsole.groupCollapsed).toBe(mockGroupCollapsed);
   });
 
   // @reactVersion >=18.0
@@ -500,9 +497,6 @@ describe('console', () => {
       fakeConsole.log('log');
       fakeConsole.warn('warn');
       fakeConsole.error('error');
-      fakeConsole.info('info');
-      fakeConsole.group('group');
-      fakeConsole.groupCollapsed('groupCollapsed');
       return <div />;
     }
 
@@ -540,36 +534,6 @@ describe('console', () => {
       `color: ${process.env.DARK_MODE_DIMMED_ERROR_COLOR}`,
       'error',
     ]);
-
-    expect(mockInfo).toHaveBeenCalledTimes(2);
-    expect(mockInfo.mock.calls[0]).toHaveLength(1);
-    expect(mockInfo.mock.calls[0][0]).toBe('info');
-    expect(mockInfo.mock.calls[1]).toHaveLength(3);
-    expect(mockInfo.mock.calls[1]).toEqual([
-      '%c%s',
-      `color: ${process.env.DARK_MODE_DIMMED_LOG_COLOR}`,
-      'info',
-    ]);
-
-    expect(mockGroup).toHaveBeenCalledTimes(2);
-    expect(mockGroup.mock.calls[0]).toHaveLength(1);
-    expect(mockGroup.mock.calls[0][0]).toBe('group');
-    expect(mockGroup.mock.calls[1]).toHaveLength(3);
-    expect(mockGroup.mock.calls[1]).toEqual([
-      '%c%s',
-      `color: ${process.env.DARK_MODE_DIMMED_LOG_COLOR}`,
-      'group',
-    ]);
-
-    expect(mockGroupCollapsed).toHaveBeenCalledTimes(2);
-    expect(mockGroupCollapsed.mock.calls[0]).toHaveLength(1);
-    expect(mockGroupCollapsed.mock.calls[0][0]).toBe('groupCollapsed');
-    expect(mockGroupCollapsed.mock.calls[1]).toHaveLength(3);
-    expect(mockGroupCollapsed.mock.calls[1]).toEqual([
-      '%c%s',
-      `color: ${process.env.DARK_MODE_DIMMED_LOG_COLOR}`,
-      'groupCollapsed',
-    ]);
   });
 
   it('should not double log if hideConsoleLogsInStrictMode is enabled in Strict mode', () => {
@@ -580,16 +544,9 @@ describe('console', () => {
     const root = ReactDOMClient.createRoot(container);
 
     function App() {
-      console.log(
-        'CALL',
-        global.__REACT_DEVTOOLS_HIDE_CONSOLE_LOGS_IN_STRICT_MODE__,
-      );
       fakeConsole.log('log');
       fakeConsole.warn('warn');
       fakeConsole.error('error');
-      fakeConsole.info('info');
-      fakeConsole.group('group');
-      fakeConsole.groupCollapsed('groupCollapsed');
       return <div />;
     }
 
@@ -612,18 +569,6 @@ describe('console', () => {
     expect(mockError).toHaveBeenCalledTimes(1);
     expect(mockError.mock.calls[0]).toHaveLength(1);
     expect(mockError.mock.calls[0][0]).toBe('error');
-
-    expect(mockInfo).toHaveBeenCalledTimes(1);
-    expect(mockInfo.mock.calls[0]).toHaveLength(1);
-    expect(mockInfo.mock.calls[0][0]).toBe('info');
-
-    expect(mockGroup).toHaveBeenCalledTimes(1);
-    expect(mockGroup.mock.calls[0]).toHaveLength(1);
-    expect(mockGroup.mock.calls[0][0]).toBe('group');
-
-    expect(mockGroupCollapsed).toHaveBeenCalledTimes(1);
-    expect(mockGroupCollapsed.mock.calls[0]).toHaveLength(1);
-    expect(mockGroupCollapsed.mock.calls[0][0]).toBe('groupCollapsed');
   });
 
   it('should double log in Strict mode initial render for extension', () => {
@@ -795,8 +740,6 @@ describe('console error', () => {
     // because Jest itself has hooks into it as does our test env setup.
     mockError = jest.fn();
     mockInfo = jest.fn();
-    mockGroup = jest.fn();
-    mockGroupCollapsed = jest.fn();
     mockLog = jest.fn();
     mockWarn = jest.fn();
     fakeConsole = {
@@ -804,8 +747,6 @@ describe('console error', () => {
       info: mockInfo,
       log: mockLog,
       warn: mockWarn,
-      group: mockGroup,
-      groupCollapsed: mockGroupCollapsed,
     };
 
     Console.dangerous_setTargetConsoleForTesting(fakeConsole);

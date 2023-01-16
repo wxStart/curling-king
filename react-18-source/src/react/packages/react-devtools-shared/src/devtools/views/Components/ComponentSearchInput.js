@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -13,9 +13,9 @@ import {TreeDispatcherContext, TreeStateContext} from './TreeContext';
 
 import SearchInput from '../SearchInput';
 
-type Props = {};
+type Props = {||};
 
-export default function ComponentSearchInput(props: Props): React.Node {
+export default function ComponentSearchInput(props: Props) {
   const {searchIndex, searchResults, searchText} = useContext(TreeStateContext);
   const dispatch = useContext(TreeDispatcherContext);
 

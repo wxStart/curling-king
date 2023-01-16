@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -30,9 +30,6 @@ describe('refs-destruction', () => {
     }
 
     TestComponent = class extends React.Component {
-      theInnerDivRef = React.createRef();
-      theInnerClassComponentRef = React.createRef();
-
       render() {
         if (this.props.destroy) {
           return <div />;
@@ -46,8 +43,8 @@ describe('refs-destruction', () => {
         } else {
           return (
             <div>
-              <div ref={this.theInnerDivRef} />
-              <ClassComponent ref={this.theInnerClassComponentRef} />
+              <div ref="theInnerDiv" />
+              <ClassComponent ref="theInnerClassComponent" />
             </div>
           );
         }
@@ -58,45 +55,52 @@ describe('refs-destruction', () => {
   it('should remove refs when destroying the parent', () => {
     const container = document.createElement('div');
     const testInstance = ReactDOM.render(<TestComponent />, container);
-
+    expect(ReactTestUtils.isDOMComponent(testInstance.refs.theInnerDiv)).toBe(
+      true,
+    );
     expect(
-      ReactTestUtils.isDOMComponent(testInstance.theInnerDivRef.current),
-    ).toBe(true);
-    expect(testInstance.theInnerClassComponentRef.current).toBeTruthy();
-
+      Object.keys(testInstance.refs || {}).filter(key => testInstance.refs[key])
+        .length,
+    ).toEqual(2);
     ReactDOM.unmountComponentAtNode(container);
-
-    expect(testInstance.theInnerDivRef.current).toBe(null);
-    expect(testInstance.theInnerClassComponentRef.current).toBe(null);
+    expect(
+      Object.keys(testInstance.refs || {}).filter(key => testInstance.refs[key])
+        .length,
+    ).toEqual(0);
   });
 
   it('should remove refs when destroying the child', () => {
     const container = document.createElement('div');
     const testInstance = ReactDOM.render(<TestComponent />, container);
+    expect(ReactTestUtils.isDOMComponent(testInstance.refs.theInnerDiv)).toBe(
+      true,
+    );
     expect(
-      ReactTestUtils.isDOMComponent(testInstance.theInnerDivRef.current),
-    ).toBe(true);
-    expect(testInstance.theInnerClassComponentRef.current).toBeTruthy();
-
+      Object.keys(testInstance.refs || {}).filter(key => testInstance.refs[key])
+        .length,
+    ).toEqual(2);
     ReactDOM.render(<TestComponent destroy={true} />, container);
-
-    expect(testInstance.theInnerDivRef.current).toBe(null);
-    expect(testInstance.theInnerClassComponentRef.current).toBe(null);
+    expect(
+      Object.keys(testInstance.refs || {}).filter(key => testInstance.refs[key])
+        .length,
+    ).toEqual(0);
   });
 
   it('should remove refs when removing the child ref attribute', () => {
     const container = document.createElement('div');
     const testInstance = ReactDOM.render(<TestComponent />, container);
-
+    expect(ReactTestUtils.isDOMComponent(testInstance.refs.theInnerDiv)).toBe(
+      true,
+    );
     expect(
-      ReactTestUtils.isDOMComponent(testInstance.theInnerDivRef.current),
-    ).toBe(true);
-    expect(testInstance.theInnerClassComponentRef.current).toBeTruthy();
-
+      Object.keys(testInstance.refs || {}).filter(key => testInstance.refs[key])
+        .length,
+    ).toEqual(2);
     ReactDOM.render(<TestComponent removeRef={true} />, container);
-
-    expect(testInstance.theInnerDivRef.current).toBe(null);
-    expect(testInstance.theInnerClassComponentRef.current).toBe(null);
+    expect(
+      Object.keys(testInstance.refs || {}).filter(key => testInstance.refs[key])
+        .length,
+    ).toEqual(0);
   });
 
   it('should not error when destroying child with ref asynchronously', () => {
@@ -131,7 +135,7 @@ describe('refs-destruction', () => {
       render() {
         return (
           <Modal>
-            <a ref={React.createRef()} />
+            <a ref="ref" />
           </Modal>
         );
       }

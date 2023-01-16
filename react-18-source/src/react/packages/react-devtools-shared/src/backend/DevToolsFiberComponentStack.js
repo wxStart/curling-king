@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -21,7 +21,7 @@ import {
   describeClassComponentFrame,
 } from './DevToolsComponentStackFrame';
 
-export function describeFiber(
+function describeFiber(
   workTagMap: WorkTagMap,
   workInProgress: Fiber,
   currentDispatcherRef: CurrentDispatcherRef,
@@ -43,32 +43,36 @@ export function describeFiber(
       ? workInProgress._debugOwner.type
       : null
     : null;
+  const source = __DEV__ ? workInProgress._debugSource : null;
   switch (workInProgress.tag) {
     case HostComponent:
-      return describeBuiltInComponentFrame(workInProgress.type, owner);
+      return describeBuiltInComponentFrame(workInProgress.type, source, owner);
     case LazyComponent:
-      return describeBuiltInComponentFrame('Lazy', owner);
+      return describeBuiltInComponentFrame('Lazy', source, owner);
     case SuspenseComponent:
-      return describeBuiltInComponentFrame('Suspense', owner);
+      return describeBuiltInComponentFrame('Suspense', source, owner);
     case SuspenseListComponent:
-      return describeBuiltInComponentFrame('SuspenseList', owner);
+      return describeBuiltInComponentFrame('SuspenseList', source, owner);
     case FunctionComponent:
     case IndeterminateComponent:
     case SimpleMemoComponent:
       return describeFunctionComponentFrame(
         workInProgress.type,
+        source,
         owner,
         currentDispatcherRef,
       );
     case ForwardRef:
       return describeFunctionComponentFrame(
         workInProgress.type.render,
+        source,
         owner,
         currentDispatcherRef,
       );
     case ClassComponent:
       return describeClassComponentFrame(
         workInProgress.type,
+        source,
         owner,
         currentDispatcherRef,
       );
@@ -84,10 +88,9 @@ export function getStackByFiberInDevAndProd(
 ): string {
   try {
     let info = '';
-    let node: Fiber = workInProgress;
+    let node = workInProgress;
     do {
       info += describeFiber(workTagMap, node, currentDispatcherRef);
-      // $FlowFixMe[incompatible-type] we bail out when we get a null
       node = node.return;
     } while (node);
     return info;

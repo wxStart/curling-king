@@ -51,12 +51,11 @@ module.exports = {
   devtool: __DEV__ ? 'cheap-module-eval-source-map' : false,
   entry: {
     background: './src/background.js',
+    contentScript: './src/contentScript.js',
+    injectGlobalHook: './src/injectGlobalHook.js',
     main: './src/main.js',
     panel: './src/panel.js',
-    proxy: './src/contentScripts/proxy.js',
-    prepareInjection: './src/contentScripts/prepareInjection.js',
-    renderer: './src/contentScripts/renderer.js',
-    installHook: './src/contentScripts/installHook.js',
+    renderer: './src/renderer.js',
   },
   output: {
     path: __dirname + '/build',

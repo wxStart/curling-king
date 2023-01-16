@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -60,8 +60,6 @@ class StatusDisplay extends React.Component {
  * Displays friends statuses.
  */
 class FriendsStatusDisplay extends React.Component {
-  displays = {};
-
   /**
    * Gets the order directly from each rendered child's `index` field.
    * Refs are not maintained in the rendered order, and neither is
@@ -86,7 +84,7 @@ class FriendsStatusDisplay extends React.Component {
     const originalKeys = this.getOriginalKeys();
     for (let i = 0; i < originalKeys.length; i++) {
       const key = originalKeys[i];
-      res[key] = this.displays[key];
+      res[key] = this.refs[key];
     }
     return res;
   }
@@ -106,7 +104,7 @@ class FriendsStatusDisplay extends React.Component {
         // We are only interested in children up to the current key.
         return;
       }
-      expect(this.displays[key]).toBeTruthy();
+      expect(this.refs[key]).toBeTruthy();
     }
   }
 
@@ -118,9 +116,7 @@ class FriendsStatusDisplay extends React.Component {
         !status ? null : (
           <StatusDisplay
             key={key}
-            ref={current => {
-              this.displays[key] = current;
-            }}
+            ref={key}
             contentKey={key}
             onFlush={this.verifyPreviousRefsResolved.bind(this, key)}
             status={status}

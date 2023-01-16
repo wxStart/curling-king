@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -16,21 +16,14 @@ const {
   unstable_IdlePriority: IdlePriority,
 } = Scheduler;
 
-type Entry<T> = {
+type Entry<T> = {|
   value: T,
   onDelete: () => mixed,
   previous: Entry<T>,
   next: Entry<T>,
-};
+|};
 
-type LRU<T> = {
-  add(value: Object, onDelete: () => mixed): Entry<Object>,
-  update(entry: Entry<T>, newValue: T): void,
-  access(entry: Entry<T>): T,
-  setLimit(newLimit: number): void,
-};
-
-export function createLRU<T>(limit: number): LRU<T> {
+export function createLRU<T>(limit: number) {
   let LIMIT = limit;
 
   // Circular, doubly-linked list
@@ -57,7 +50,7 @@ export function createLRU<T>(limit: number): LRU<T> {
     // Delete entries from the cache, starting from the end of the list.
     if (first !== null) {
       const resolvedFirst: Entry<T> = (first: any);
-      let last: null | Entry<T> = resolvedFirst.previous;
+      let last = resolvedFirst.previous;
       while (size > targetSize && last !== null) {
         const onDelete = last.onDelete;
         const previous = last.previous;
@@ -142,7 +135,7 @@ export function createLRU<T>(limit: number): LRU<T> {
     return entry.value;
   }
 
-  function setLimit(newLimit: number): void {
+  function setLimit(newLimit: number) {
     LIMIT = newLimit;
     scheduleCleanUp();
   }

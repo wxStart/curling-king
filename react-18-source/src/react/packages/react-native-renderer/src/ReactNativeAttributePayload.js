@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -64,7 +64,6 @@ function restoreDeletedValuesInNestedArray(
   } else if (node && removedKeyCount > 0) {
     const obj = node;
     for (const propKey in removedKeys) {
-      // $FlowFixMe[incompatible-use] found when upgrading Flow
       if (!removedKeys[propKey]) {
         continue;
       }
@@ -79,11 +78,9 @@ function restoreDeletedValuesInNestedArray(
       }
 
       if (typeof nextProp === 'function') {
-        // $FlowFixMe[incompatible-type] found when upgrading Flow
         nextProp = true;
       }
       if (typeof nextProp === 'undefined') {
-        // $FlowFixMe[incompatible-type] found when upgrading Flow
         nextProp = null;
       }
 
@@ -101,7 +98,6 @@ function restoreDeletedValuesInNestedArray(
             : nextProp;
         updatePayload[propKey] = nextValue;
       }
-      // $FlowFixMe[incompatible-use] found when upgrading Flow
       removedKeys[propKey] = false;
       removedKeyCount--;
     }
@@ -360,8 +356,7 @@ function diffProperties(
       if (shouldUpdate) {
         const nextValue =
           typeof attributeConfig.process === 'function'
-            ? // $FlowFixMe[incompatible-use] found when upgrading Flow
-              attributeConfig.process(nextProp)
+            ? attributeConfig.process(nextProp)
             : nextProp;
         (updatePayload || (updatePayload = {}))[propKey] = nextValue;
       }

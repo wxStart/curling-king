@@ -1,17 +1,17 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "React Developer Tools",
   "description": "Adds React debugging tools to the Microsoft Edge Developer Tools.",
-  "version": "4.27.1",
-  "version_name": "4.27.1",
-  "minimum_chrome_version": "88",
+  "version": "4.24.7",
+  "version_name": "4.24.7",
+  "minimum_chrome_version": "60",
   "icons": {
     "16": "icons/16-production.png",
     "32": "icons/32-production.png",
     "48": "icons/48-production.png",
     "128": "icons/128-production.png"
   },
-  "action": {
+  "browser_action": {
     "default_icon": {
       "16": "icons/16-disabled.png",
       "32": "icons/32-disabled.png",
@@ -21,34 +21,23 @@
     "default_popup": "popups/disabled.html"
   },
   "devtools_page": "main.html",
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
-  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "web_accessible_resources": [
-    {
-      "resources": [
-        "main.html",
-        "panel.html",
-        "build/react_devtools_backend.js",
-        "build/proxy.js",
-        "build/renderer.js",
-        "build/installHook.js"
-      ],
-      "matches": [
-        "<all_urls>"
-      ],
-      "extension_ids": []
-    }
+    "main.html",
+    "panel.html",
+    "build/react_devtools_backend.js",
+    "build/renderer.js"
   ],
   "background": {
-    "service_worker": "build/background.js"
+    "scripts": [
+      "build/background.js"
+    ],
+    "persistent": false
   },
   "permissions": [
-    "storage",
-    "scripting"
-  ],
-  "host_permissions": [
-    "<all_urls>"
+    "file:///*",
+    "http://*/*",
+    "https://*/*"
   ],
   "content_scripts": [
     {
@@ -56,7 +45,7 @@
         "<all_urls>"
       ],
       "js": [
-        "build/prepareInjection.js"
+        "build/injectGlobalHook.js"
       ],
       "run_at": "document_start"
     }

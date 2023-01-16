@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -15,7 +15,7 @@ export type JSONValue =
   | boolean
   | null
   | {+[key: string]: JSONValue}
-  | $ReadOnlyArray<JSONValue>;
+  | Array<JSONValue>;
 
 export type RowEncoding =
   | ['J', number, JSONValue]
@@ -26,9 +26,8 @@ export type RowEncoding =
       'E',
       number,
       {
-        digest: string,
-        message?: string,
-        stack?: string,
+        message: string,
+        stack: string,
         ...
       },
     ];

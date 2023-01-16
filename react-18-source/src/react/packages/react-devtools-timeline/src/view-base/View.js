@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -55,7 +55,7 @@ export class View {
    * @see setNeedsDisplay
    * @private
    */
-  _needsDisplay: boolean = true;
+  _needsDisplay = true;
 
   /**
    * Whether the hierarchy below this view has subviews that need display.
@@ -65,7 +65,7 @@ export class View {
    * @see setSubviewsNeedDisplay
    * @private
    */
-  _subviewsNeedDisplay: boolean = false;
+  _subviewsNeedDisplay = false;
 
   constructor(
     surface: Surface,

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -7,7 +7,6 @@
  * @flow
  */
 
-import type {ReactContext} from 'shared/ReactTypes';
 import * as React from 'react';
 import {
   createContext,
@@ -24,39 +23,39 @@ import styles from './ModalDialog.css';
 
 type ID = any;
 
-type DIALOG_ACTION_HIDE = {
+type DIALOG_ACTION_HIDE = {|
   type: 'HIDE',
   id: ID,
-};
-type DIALOG_ACTION_SHOW = {
+|};
+type DIALOG_ACTION_SHOW = {|
   type: 'SHOW',
   canBeDismissed?: boolean,
   content: React$Node,
   id: ID,
   title?: React$Node | null,
-};
+|};
 
 type Action = DIALOG_ACTION_HIDE | DIALOG_ACTION_SHOW;
 
 type Dispatch = (action: Action) => void;
 
-type Dialog = {
+type Dialog = {|
   canBeDismissed: boolean,
   content: React$Node | null,
   id: ID,
   title: React$Node | null,
-};
+|};
 
-type State = {
+type State = {|
   dialogs: Array<Dialog>,
-};
+|};
 
-type ModalDialogContextType = {
+type ModalDialogContextType = {|
   ...State,
   dispatch: Dispatch,
-};
+|};
 
-const ModalDialogContext: ReactContext<ModalDialogContextType> = createContext<ModalDialogContextType>(
+const ModalDialogContext = createContext<ModalDialogContextType>(
   ((null: any): ModalDialogContextType),
 );
 ModalDialogContext.displayName = 'ModalDialogContext';
@@ -84,11 +83,11 @@ function dialogReducer(state, action) {
   }
 }
 
-type Props = {
+type Props = {|
   children: React$Node,
-};
+|};
 
-function ModalDialogContextController({children}: Props): React.Node {
+function ModalDialogContextController({children}: Props) {
   const [state, dispatch] = useReducer<State, State, Action>(dialogReducer, {
     dialogs: [],
   });
@@ -108,7 +107,7 @@ function ModalDialogContextController({children}: Props): React.Node {
   );
 }
 
-function ModalDialog(_: {}): React.Node {
+function ModalDialog(_: {||}) {
   const {dialogs, dispatch} = useContext(ModalDialogContext);
 
   if (dialogs.length === 0) {
@@ -137,13 +136,13 @@ function ModalDialogImpl({
   dispatch,
   id,
   title,
-}: {
+}: {|
   canBeDismissed: boolean,
   content: React$Node | null,
   dispatch: Dispatch,
   id: ID,
   title: React$Node | null,
-}) {
+|}) {
   const dismissModal = useCallback(() => {
     if (canBeDismissed) {
       dispatch({type: 'HIDE', id});

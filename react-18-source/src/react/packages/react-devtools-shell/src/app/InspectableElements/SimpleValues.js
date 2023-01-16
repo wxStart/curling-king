@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -13,9 +13,9 @@ import {Component} from 'react';
 function noop() {}
 
 export default class SimpleValues extends Component {
-  anonymousFunction: () => void = () => {};
+  anonymousFunction = () => {};
 
-  render(): React.Node {
+  render() {
     return (
       <ChildComponent
         string="abc"

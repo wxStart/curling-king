@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -14,6 +14,7 @@ let React;
 let ReactDOMServer;
 let PropTypes;
 let ReactCurrentDispatcher;
+let useingPartialRenderer;
 
 describe('ReactDOMServer', () => {
   beforeEach(() => {
@@ -24,6 +25,8 @@ describe('ReactDOMServer', () => {
     ReactCurrentDispatcher =
       React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
         .ReactCurrentDispatcher;
+
+    useingPartialRenderer = global.__WWW__ && !__EXPERIMENTAL__;
   });
 
   describe('renderToString', () => {
@@ -573,7 +576,11 @@ describe('ReactDOMServer', () => {
           <Suspender />
         </React.Suspense>,
       );
-      expect(response).toEqual('fallback');
+      if (useingPartialRenderer) {
+        expect(response).toEqual('<!--$!-->fallback<!--/$-->');
+      } else {
+        expect(response).toEqual('fallback');
+      }
     });
   });
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -57,7 +57,7 @@ function hookNamesModuleLoaderFunction() {
   );
 }
 
-function setContentDOMNode(value: HTMLElement): typeof DevtoolsUI {
+function setContentDOMNode(value: HTMLElement) {
   node = value;
 
   // Save so we can restore the exact waiting message between sessions.
@@ -70,14 +70,12 @@ function setProjectRoots(value: Array<string>) {
   projectRoots = value;
 }
 
-function setStatusListener(value: StatusListener): typeof DevtoolsUI {
+function setStatusListener(value: StatusListener) {
   statusListener = value;
   return DevtoolsUI;
 }
 
-function setDisconnectedCallback(
-  value: OnDisconnectedCallback,
-): typeof DevtoolsUI {
+function setDisconnectedCallback(value: OnDisconnectedCallback) {
   disconnectedCallback = value;
   return DevtoolsUI;
 }
@@ -256,10 +254,9 @@ function initialize(socket: WebSocket) {
     socket.close();
   });
 
-  // $FlowFixMe[incompatible-call] found when upgrading Flow
   store = new Store(bridge, {
     checkBridgeProtocolCompatibility: true,
-    supportsNativeInspection: true,
+    supportsNativeInspection: false,
   });
 
   log('Connected');
@@ -269,7 +266,7 @@ function initialize(socket: WebSocket) {
 
 let startServerTimeoutID: TimeoutID | null = null;
 
-function connectToSocket(socket: WebSocket): {close(): void} {
+function connectToSocket(socket: WebSocket) {
   socket.onerror = err => {
     onDisconnected();
     log.error('Error with websocket connection', err);
@@ -287,21 +284,21 @@ function connectToSocket(socket: WebSocket): {close(): void} {
   };
 }
 
-type ServerOptions = {
+type ServerOptions = {|
   key?: string,
   cert?: string,
-};
+|};
 
-type LoggerOptions = {
+type LoggerOptions = {|
   surface?: ?string,
-};
+|};
 
 function startServer(
   port?: number = 8097,
   host?: string = 'localhost',
   httpsOptions?: ServerOptions,
   loggerOptions?: LoggerOptions,
-): {close(): void} {
+) {
   registerDevToolsEventLogger(loggerOptions?.surface ?? 'standalone');
 
   const useHttps = !!httpsOptions;

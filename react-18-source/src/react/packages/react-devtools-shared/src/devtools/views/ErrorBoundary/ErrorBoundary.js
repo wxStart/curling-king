@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -22,14 +22,14 @@ import UserError from 'react-devtools-shared/src/errors/UserError';
 import UnknownHookError from 'react-devtools-shared/src/errors/UnknownHookError';
 import {logEvent} from 'react-devtools-shared/src/Logger';
 
-type Props = {
+type Props = {|
   children: React$Node,
   canDismiss?: boolean,
   onBeforeDismissCallback?: () => void,
   store?: Store,
-};
+|};
 
-type State = {
+type State = {|
   callStack: string | null,
   canDismiss: boolean,
   componentStack: string | null,
@@ -39,7 +39,7 @@ type State = {
   isTimeout: boolean,
   isUserError: boolean,
   isUnknownHookError: boolean,
-};
+|};
 
 const InitialState: State = {
   callStack: null,
@@ -56,17 +56,7 @@ const InitialState: State = {
 export default class ErrorBoundary extends Component<Props, State> {
   state: State = InitialState;
 
-  static getDerivedStateFromError(
-    error: any,
-  ): {
-    callStack: string | null,
-    errorMessage: string | null,
-    hasError: boolean,
-    isTimeout: boolean,
-    isUnknownHookError: boolean,
-    isUnsupportedBridgeOperationError: boolean,
-    isUserError: boolean,
-  } {
+  static getDerivedStateFromError(error: any) {
     const errorMessage =
       typeof error === 'object' &&
       error !== null &&
@@ -122,7 +112,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     }
   }
 
-  render(): React.Node {
+  render() {
     const {canDismiss: canDismissProp, children} = this.props;
     const {
       callStack,
@@ -211,10 +201,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     return children;
   }
 
-  _logError: (error: any, componentStack: string | null) => void = (
-    error,
-    componentStack,
-  ) => {
+  _logError = (error: any, componentStack: string | null) => {
     logEvent({
       event_name: 'error',
       error_message: error.message ?? null,
@@ -223,7 +210,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     });
   };
 
-  _dismissError: () => void = () => {
+  _dismissError = () => {
     const onBeforeDismissCallback = this.props.onBeforeDismissCallback;
     if (typeof onBeforeDismissCallback === 'function') {
       onBeforeDismissCallback();
@@ -232,7 +219,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     this.setState(InitialState);
   };
 
-  _onStoreError: (error: Error) => void = error => {
+  _onStoreError = (error: Error) => {
     if (!this.state.hasError) {
       this._logError(error, null);
       this.setState({

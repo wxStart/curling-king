@@ -6,8 +6,6 @@
 
 'use strict';
 
-/* eslint-disable no-unused-vars */
-
 type ReactComponentInstance = React$Component<any>;
 
 type ReactTestRendererJSON = {
@@ -79,6 +77,7 @@ declare module 'react-test-renderer/shallow' {
     static createRenderer(): ShallowRenderer;
     getMountedInstance(): ReactTestInstance;
     getRenderOutput<E: React$Element<any>>(): E;
+    getRenderOutput(): React$Element<any>;
     render(element: React$Element<any>, context?: any): void;
     unmount(): void;
   }

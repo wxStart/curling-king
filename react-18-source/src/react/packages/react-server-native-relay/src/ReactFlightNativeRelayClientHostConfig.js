@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -44,9 +44,9 @@ export function resolveModuleReference<T>(
   return resolveModuleReferenceImpl(moduleData);
 }
 
-function parseModelRecursively(response: Response, parentObj, key, value) {
+function parseModelRecursively(response: Response, parentObj, value) {
   if (typeof value === 'string') {
-    return parseModelString(response, parentObj, key, value);
+    return parseModelString(response, parentObj, value);
   }
   if (typeof value === 'object' && value !== null) {
     if (isArray(value)) {
@@ -55,7 +55,6 @@ function parseModelRecursively(response: Response, parentObj, key, value) {
         (parsedValue: any)[i] = parseModelRecursively(
           response,
           value,
-          '' + i,
           value[i],
         );
       }
@@ -66,7 +65,6 @@ function parseModelRecursively(response: Response, parentObj, key, value) {
         (parsedValue: any)[innerKey] = parseModelRecursively(
           response,
           value,
-          innerKey,
           value[innerKey],
         );
       }
@@ -79,5 +77,5 @@ function parseModelRecursively(response: Response, parentObj, key, value) {
 const dummy = {};
 
 export function parseModel<T>(response: Response, json: UninitializedModel): T {
-  return (parseModelRecursively(response, dummy, '', json): any);
+  return (parseModelRecursively(response, dummy, json): any);
 }

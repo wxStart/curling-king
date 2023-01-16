@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,7 +10,6 @@
 import ReactVersion from 'shared/ReactVersion';
 
 import type {ReactNodeList} from 'shared/ReactTypes';
-import type {BootstrapScriptDescriptor} from 'react-dom-bindings/src/server/ReactDOMServerFormatConfig';
 
 import {
   createRequest,
@@ -22,7 +21,7 @@ import {
 import {
   createResponseState,
   createRootFormatContext,
-} from 'react-dom-bindings/src/server/ReactDOMServerLegacyFormatConfig';
+} from './ReactDOMServerLegacyFormatConfig';
 
 type ServerOptions = {
   identifierPrefix?: string,
@@ -37,7 +36,6 @@ function renderToStringImpl(
   options: void | ServerOptions,
   generateStaticMarkup: boolean,
   abortReason: string,
-  unstable_externalRuntimeSrc?: string | BootstrapScriptDescriptor,
 ): string {
   let didFatal = false;
   let fatalError = null;
@@ -64,7 +62,6 @@ function renderToStringImpl(
     createResponseState(
       generateStaticMarkup,
       options ? options.identifierPrefix : undefined,
-      unstable_externalRuntimeSrc,
     ),
     createRootFormatContext(),
     Infinity,
@@ -79,7 +76,7 @@ function renderToStringImpl(
   // That way we write only client-rendered boundaries from the start.
   abort(request, abortReason);
   startFlowing(request, destination);
-  if (didFatal && fatalError !== abortReason) {
+  if (didFatal) {
     throw fatalError;
   }
 

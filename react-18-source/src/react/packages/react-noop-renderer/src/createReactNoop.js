@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -18,7 +18,7 @@ import type {
   Fiber,
   TransitionTracingCallbacks,
 } from 'react-reconciler/src/ReactInternalTypes';
-import type {UpdateQueue} from 'react-reconciler/src/ReactFiberClassUpdateQueue';
+import type {UpdateQueue} from 'react-reconciler/src/ReactFiberClassUpdateQueue.new';
 import type {ReactNodeList} from 'shared/ReactTypes';
 import type {RootTag} from 'react-reconciler/src/ReactRootTags';
 
@@ -49,7 +49,7 @@ type Props = {
   top?: null | number,
   ...
 };
-type Instance = {
+type Instance = {|
   type: string,
   id: number,
   parent: number,
@@ -58,17 +58,17 @@ type Instance = {
   prop: any,
   hidden: boolean,
   context: HostContext,
-};
-type TextInstance = {
+|};
+type TextInstance = {|
   text: string,
   id: number,
   parent: number,
   hidden: boolean,
   context: HostContext,
-};
+|};
 type HostContext = Object;
 type CreateRootOptions = {
-  unstable_transitionCallbacks?: TransitionTracingCallbacks,
+  transitionCallbacks?: TransitionTracingCallbacks,
   ...
 };
 
@@ -272,13 +272,15 @@ function createReactNoop(reconciler: Function, useMutation: boolean) {
   }
 
   const sharedHostConfig = {
-    supportsSingletons: false,
-
     getRootHostContext() {
       return NO_CONTEXT;
     },
 
-    getChildHostContext(parentHostContext: HostContext, type: string) {
+    getChildHostContext(
+      parentHostContext: HostContext,
+      type: string,
+      rootcontainerInstance: Container,
+    ) {
       if (type === 'offscreen') {
         return parentHostContext;
       }
@@ -475,13 +477,6 @@ function createReactNoop(reconciler: Function, useMutation: boolean) {
     logRecoverableError() {
       // no-op
     },
-
-    requestPostPaintCallback(callback) {
-      const endTime = Scheduler.unstable_now();
-      callback(endTime);
-    },
-    prepareRendererToRender() {},
-    resetRendererAfterRender() {},
   };
 
   const hostConfig = useMutation
@@ -811,7 +806,6 @@ function createReactNoop(reconciler: Function, useMutation: boolean) {
           false,
           '',
           onRecoverableError,
-          null,
         );
         roots.set(rootID, root);
       }
@@ -833,8 +827,8 @@ function createReactNoop(reconciler: Function, useMutation: boolean) {
         false,
         '',
         onRecoverableError,
-        options && options.unstable_transitionCallbacks
-          ? options.unstable_transitionCallbacks
+        options && options.transitionCallbacks
+          ? options.transitionCallbacks
           : null,
       );
       return {
@@ -865,7 +859,6 @@ function createReactNoop(reconciler: Function, useMutation: boolean) {
         false,
         '',
         onRecoverableError,
-        null,
       );
       return {
         _Scheduler: Scheduler,
@@ -962,14 +955,14 @@ function createReactNoop(reconciler: Function, useMutation: boolean) {
     flushWithHostCounters(
       fn: () => void,
     ):
-      | {
+      | {|
           hostDiffCounter: number,
           hostUpdateCounter: number,
-        }
-      | {
+        |}
+      | {|
           hostDiffCounter: number,
           hostCloneCounter: number,
-        } {
+        |} {
       hostDiffCounter = 0;
       hostUpdateCounter = 0;
       hostCloneCounter = 0;

@@ -1,13 +1,11 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
  * @flow
  */
-
-import type {ReactContext} from 'shared/ReactTypes';
 
 import * as React from 'react';
 import {
@@ -39,20 +37,18 @@ import type {
 
 export type GetStyleAndLayout = (id: number) => StyleAndLayoutFrontend | null;
 
-type Context = {
+type Context = {|
   getStyleAndLayout: GetStyleAndLayout,
-};
+|};
 
-const NativeStyleContext: ReactContext<Context> = createContext<Context>(
-  ((null: any): Context),
-);
+const NativeStyleContext = createContext<Context>(((null: any): Context));
 NativeStyleContext.displayName = 'NativeStyleContext';
 
 type ResolveFn = (styleAndLayout: StyleAndLayoutFrontend) => void;
-type InProgressRequest = {
+type InProgressRequest = {|
   promise: Thenable<StyleAndLayoutFrontend>,
   resolveFn: ResolveFn,
-};
+|};
 
 const inProgressRequests: WeakMap<Element, InProgressRequest> = new WeakMap();
 const resource: Resource<
@@ -66,11 +62,7 @@ const resource: Resource<
       return request.promise;
     }
 
-    let resolveFn:
-      | ResolveFn
-      | ((
-          result: Promise<StyleAndLayoutFrontend> | StyleAndLayoutFrontend,
-        ) => void) = ((null: any): ResolveFn);
+    let resolveFn = ((null: any): ResolveFn);
     const promise = new Promise(resolve => {
       resolveFn = resolve;
     });
@@ -83,11 +75,11 @@ const resource: Resource<
   {useWeakMap: true},
 );
 
-type Props = {
+type Props = {|
   children: React$Node,
-};
+|};
 
-function NativeStyleContextController({children}: Props): React.Node {
+function NativeStyleContextController({children}: Props) {
   const bridge = useContext<FrontendBridge>(BridgeContext);
   const store = useContext<Store>(StoreContext);
 

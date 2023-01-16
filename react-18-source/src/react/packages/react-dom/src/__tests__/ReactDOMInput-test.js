@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -1071,31 +1071,22 @@ describe('ReactDOMInput', () => {
 
   it('should control radio buttons', () => {
     class RadioGroup extends React.Component {
-      aRef = React.createRef();
-      bRef = React.createRef();
-      cRef = React.createRef();
-
       render() {
         return (
           <div>
             <input
-              ref={this.aRef}
+              ref="a"
               type="radio"
               name="fruit"
               checked={true}
               onChange={emptyFunction}
             />
             A
-            <input
-              ref={this.bRef}
-              type="radio"
-              name="fruit"
-              onChange={emptyFunction}
-            />
+            <input ref="b" type="radio" name="fruit" onChange={emptyFunction} />
             B
             <form>
               <input
-                ref={this.cRef}
+                ref="c"
                 type="radio"
                 name="fruit"
                 defaultChecked={true}
@@ -1108,9 +1099,9 @@ describe('ReactDOMInput', () => {
     }
 
     const stub = ReactDOM.render(<RadioGroup />, container);
-    const aNode = stub.aRef.current;
-    const bNode = stub.bRef.current;
-    const cNode = stub.cRef.current;
+    const aNode = stub.refs.a;
+    const bNode = stub.refs.b;
+    const cNode = stub.refs.c;
 
     expect(aNode.checked).toBe(true);
     expect(bNode.checked).toBe(false);

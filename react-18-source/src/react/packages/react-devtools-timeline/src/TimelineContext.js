@@ -1,13 +1,11 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
  * @flow
  */
-
-import type {ReactContext, RefObject} from 'shared/ReactTypes';
 
 import * as React from 'react';
 import {
@@ -25,30 +23,26 @@ import type {
   TimelineData,
   SearchRegExpStateChangeCallback,
   ViewState,
-  ReactEventInfo,
 } from './types';
+import type {RefObject} from 'shared/ReactTypes';
 
-export type Context = {
+export type Context = {|
   file: File | null,
   inMemoryTimelineData: Array<TimelineData> | null,
   isTimelineSupported: boolean,
   searchInputContainerRef: RefObject,
   setFile: (file: File | null) => void,
   viewState: ViewState,
-  selectEvent: ReactEventInfo => void,
-  selectedEvent: ReactEventInfo,
-};
+|};
 
-const TimelineContext: ReactContext<Context> = createContext<Context>(
-  ((null: any): Context),
-);
+const TimelineContext = createContext<Context>(((null: any): Context));
 TimelineContext.displayName = 'TimelineContext';
 
-type Props = {
+type Props = {|
   children: React$Node,
-};
+|};
 
-function TimelineContextController({children}: Props): React.Node {
+function TimelineContextController({children}: Props) {
   const searchInputContainerRef = useRef(null);
   const [file, setFile] = useState<string | null>(null);
 
@@ -127,8 +121,6 @@ function TimelineContextController({children}: Props): React.Node {
     return state;
   }, [file]);
 
-  const [selectedEvent, selectEvent] = useState<ReactEventInfo | null>(null);
-
   const value = useMemo(
     () => ({
       file,
@@ -137,18 +129,8 @@ function TimelineContextController({children}: Props): React.Node {
       searchInputContainerRef,
       setFile,
       viewState,
-      selectEvent,
-      selectedEvent,
     }),
-    [
-      file,
-      inMemoryTimelineData,
-      isTimelineSupported,
-      setFile,
-      viewState,
-      selectEvent,
-      selectedEvent,
-    ],
+    [file, inMemoryTimelineData, isTimelineSupported, setFile, viewState],
   );
 
   return (

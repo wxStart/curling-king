@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -12,11 +12,11 @@ import styles from './HocBadges.css';
 
 import type {Element} from './types';
 
-type Props = {
+type Props = {|
   element: Element,
-};
+|};
 
-export default function HocBadges({element}: Props): React.Node {
+export default function HocBadges({element}: Props) {
   const {hocDisplayNames} = ((element: any): Element);
 
   if (hocDisplayNames === null) {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -147,7 +147,6 @@ describe('ReactUpdates', () => {
 
     class Parent extends React.Component {
       state = {x: 0};
-      childRef = React.createRef();
 
       componentDidUpdate() {
         parentUpdateCount++;
@@ -156,7 +155,7 @@ describe('ReactUpdates', () => {
       render() {
         return (
           <div>
-            <Child ref={this.childRef} x={this.state.x} />
+            <Child ref="child" x={this.state.x} />
           </div>
         );
       }
@@ -177,7 +176,7 @@ describe('ReactUpdates', () => {
     }
 
     const instance = ReactTestUtils.renderIntoDocument(<Parent />);
-    const child = instance.childRef.current;
+    const child = instance.refs.child;
     expect(instance.state.x).toBe(0);
     expect(child.state.y).toBe(0);
 
@@ -201,7 +200,6 @@ describe('ReactUpdates', () => {
 
     class Parent extends React.Component {
       state = {x: 0};
-      childRef = React.createRef();
 
       componentDidUpdate() {
         parentUpdateCount++;
@@ -210,7 +208,7 @@ describe('ReactUpdates', () => {
       render() {
         return (
           <div>
-            <Child ref={this.childRef} x={this.state.x} />
+            <Child ref="child" x={this.state.x} />
           </div>
         );
       }
@@ -231,7 +229,7 @@ describe('ReactUpdates', () => {
     }
 
     const instance = ReactTestUtils.renderIntoDocument(<Parent />);
-    const child = instance.childRef.current;
+    const child = instance.refs.child;
     expect(instance.state.x).toBe(0);
     expect(child.state.y).toBe(0);
 
@@ -338,15 +336,13 @@ describe('ReactUpdates', () => {
     let childRenderCount = 0;
 
     class Parent extends React.Component {
-      childRef = React.createRef();
-
       shouldComponentUpdate() {
         return false;
       }
 
       render() {
         parentRenderCount++;
-        return <Child ref={this.childRef} />;
+        return <Child ref="child" />;
       }
     }
 
@@ -374,7 +370,7 @@ describe('ReactUpdates', () => {
     expect(childRenderCount).toBe(1);
 
     ReactDOM.unstable_batchedUpdates(function() {
-      instance.childRef.current.setState({x: 1});
+      instance.refs.child.setState({x: 1});
     });
 
     expect(parentRenderCount).toBe(1);
@@ -432,34 +428,28 @@ describe('ReactUpdates', () => {
     };
 
     class Box extends React.Component {
-      boxDivRef = React.createRef();
-
       render() {
-        return <div ref={this.boxDivRef}>{this.props.children}</div>;
+        return <div ref="boxDiv">{this.props.children}</div>;
       }
     }
     Object.assign(Box.prototype, UpdateLoggingMixin);
 
     class Child extends React.Component {
-      spanRef = React.createRef();
-
       render() {
-        return <span ref={this.spanRef}>child</span>;
+        return <span ref="span">child</span>;
       }
     }
     Object.assign(Child.prototype, UpdateLoggingMixin);
 
     class Switcher extends React.Component {
       state = {tabKey: 'hello'};
-      boxRef = React.createRef();
-      switcherDivRef = React.createRef();
       render() {
         const child = this.props.children;
 
         return (
-          <Box ref={this.boxRef}>
+          <Box ref="box">
             <div
-              ref={this.switcherDivRef}
+              ref="switcherDiv"
               style={{
                 display: this.state.tabKey === child.key ? '' : 'none',
               }}>
@@ -472,13 +462,10 @@ describe('ReactUpdates', () => {
     Object.assign(Switcher.prototype, UpdateLoggingMixin);
 
     class App extends React.Component {
-      switcherRef = React.createRef();
-      childRef = React.createRef();
-
       render() {
         return (
-          <Switcher ref={this.switcherRef}>
-            <Child key="hello" ref={this.childRef} />
+          <Switcher ref="switcher">
+            <Child key="hello" ref="child" />
           </Switcher>
         );
       }
@@ -526,21 +513,21 @@ describe('ReactUpdates', () => {
       expectUpdates(desiredWillUpdates, desiredDidUpdates);
     }
     testUpdates(
-      [root.switcherRef.current.boxRef.current, root.switcherRef.current],
+      [root.refs.switcher.refs.box, root.refs.switcher],
       // Owner-child relationships have inverse will and did
       ['Switcher', 'Box'],
       ['Box', 'Switcher'],
     );
 
     testUpdates(
-      [root.childRef.current, root.switcherRef.current.boxRef.current],
+      [root.refs.child, root.refs.switcher.refs.box],
       // Not owner-child so reconcile independently
       ['Box', 'Child'],
       ['Box', 'Child'],
     );
 
     testUpdates(
-      [root.childRef.current, root.switcherRef.current],
+      [root.refs.child, root.refs.switcher],
       // Switcher owns Box and Child, Box does not own Child
       ['Switcher', 'Box', 'Child'],
       ['Box', 'Switcher', 'Child'],
@@ -601,13 +588,12 @@ describe('ReactUpdates', () => {
 
     class Outer extends React.Component {
       state = {x: 0};
-      innerRef = React.createRef();
 
       render() {
         updates.push('Outer-render-' + this.state.x);
         return (
           <div>
-            <Inner x={this.state.x} ref={this.innerRef} />
+            <Inner x={this.state.x} ref="inner" />
           </div>
         );
       }
@@ -616,7 +602,7 @@ describe('ReactUpdates', () => {
         const x = this.state.x;
         updates.push('Outer-didUpdate-' + x);
         updates.push('Inner-setState-' + x);
-        this.innerRef.current.setState({x: x}, function() {
+        this.refs.inner.setState({x: x}, function() {
           updates.push('Inner-callback-' + x);
         });
       }
@@ -959,14 +945,12 @@ describe('ReactUpdates', () => {
 
   it('does not update one component twice in a batch (#2410)', () => {
     class Parent extends React.Component {
-      childRef = React.createRef();
-
       getChild = () => {
-        return this.childRef.current;
+        return this.refs.child;
       };
 
       render() {
-        return <Child ref={this.childRef} />;
+        return <Child ref="child" />;
       }
     }
 

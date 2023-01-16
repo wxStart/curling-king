@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -53,7 +53,7 @@ function Component({label}) {
   return <div>{label}</div>;
 }
 
-export default function ErrorBoundaries(): React.Node {
+export default function ErrorBoundaries() {
   return (
     <Fragment>
       <h1>Nested error boundaries demo</h1>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -27,7 +27,7 @@ import styles from './ProfilingImportExportButtons.css';
 
 import type {ProfilingDataExport} from './types';
 
-export default function ProfilingImportExportButtons(): React.Node {
+export default function ProfilingImportExportButtons() {
   const {isProfiling, profilingData, rootID} = useContext(ProfilerContext);
   const {setFile} = useContext(TimelineContext);
   const store = useContext(StoreContext);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -18,12 +18,12 @@ export default function useContextMenu({
   id,
   onChange,
   ref,
-}: {
+}: {|
   data: Object,
   id: string,
   onChange?: OnChangeFn,
-  ref: {current: ElementRef<any> | null},
-}) {
+  ref: {current: ElementRef<*> | null},
+|}) {
   const {showMenu} = useContext<RegistryContextType>(RegistryContext);
 
   useEffect(() => {

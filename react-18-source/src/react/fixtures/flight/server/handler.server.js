@@ -1,6 +1,6 @@
 'use strict';
 
-const {renderToPipeableStream} = require('react-server-dom-webpack/server');
+const {renderToPipeableStream} = require('react-server-dom-webpack/writer');
 const {readFile} = require('fs');
 const {resolve} = require('path');
 const React = require('react');

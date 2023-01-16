@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -474,7 +474,7 @@ describe('ReactIncrementalUpdates', () => {
       'An update (setState, replaceState, or forceUpdate) was scheduled ' +
         'from inside an update function. Update functions should be pure, ' +
         'with zero side-effects. Consider using componentDidUpdate or a ' +
-        'callback.\n\nPlease update the following component: Foo',
+        'callback.',
     );
     expect(instance.state).toEqual({a: 'a', b: 'b'});
 

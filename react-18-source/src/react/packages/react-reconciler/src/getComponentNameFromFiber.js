@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -8,7 +8,6 @@
  */
 
 import type {ReactContext, ReactProviderType} from 'shared/ReactTypes';
-import type {Fiber} from './ReactInternalTypes';
 
 import {enableLegacyHidden} from 'shared/ReactFeatureFlags';
 
@@ -19,8 +18,6 @@ import {
   HostRoot,
   HostPortal,
   HostComponent,
-  HostResource,
-  HostSingleton,
   HostText,
   Fragment,
   Mode,
@@ -79,8 +76,6 @@ export default function getComponentNameFromFiber(fiber: Fiber): string | null {
       return getWrappedName(type, type.render, 'ForwardRef');
     case Fragment:
       return 'Fragment';
-    case HostResource:
-    case HostSingleton:
     case HostComponent:
       // Host component type is the display name (e.g. "div", "View")
       return type;

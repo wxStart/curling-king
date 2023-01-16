@@ -14,7 +14,6 @@ module.exports = {
     WeakSet: 'readonly',
     Uint16Array: 'readonly',
     Reflect: 'readonly',
-    globalThis: 'readonly',
     // Vendor specific
     MSApp: 'readonly',
     __REACT_DEVTOOLS_GLOBAL_HOOK__: 'readonly',
@@ -25,6 +24,7 @@ module.exports = {
     module: 'readonly',
     define: 'readonly',
     require: 'readonly',
+    globalThis: 'readonly',
     global: 'readonly',
     // Internet Explorer
     setImmediate: 'readonly',
@@ -41,9 +41,6 @@ module.exports = {
     // Flight
     Uint8Array: 'readonly',
     Promise: 'readonly',
-
-    // Temp
-    AsyncLocalStorage: 'readonly',
 
     // Flight Webpack
     __webpack_chunk_load__: 'readonly',
@@ -67,5 +64,5 @@ module.exports = {
   // These plugins aren't used, but eslint complains if an eslint-ignore comment
   // references unused plugins. An alternate approach could be to strip
   // eslint-ignore comments as part of the build.
-  plugins: ['ft-flow', 'jest', 'no-for-of-loops', 'react', 'react-internal'],
+  plugins: ['jest', 'no-for-of-loops', 'react', 'react-internal'],
 };

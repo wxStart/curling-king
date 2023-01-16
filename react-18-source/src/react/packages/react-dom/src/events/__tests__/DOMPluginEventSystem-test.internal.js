@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -58,16 +58,6 @@ describe('DOMPluginEventSystem', () => {
       'enableLegacyFBSupport ' +
         (enableLegacyFBSupport ? 'enabled' : 'disabled'),
       () => {
-        beforeAll(() => {
-          // These tests are run twice, once with legacyFBSupport enabled and once disabled.
-          // The document needs to be cleaned up a bit before the second pass otherwise it is
-          // operating in a non pristine environment
-          document.removeChild(document.documentElement);
-          document.appendChild(document.createElement('html'));
-          document.documentElement.appendChild(document.createElement('head'));
-          document.documentElement.appendChild(document.createElement('body'));
-        });
-
         beforeEach(() => {
           jest.resetModules();
           ReactFeatureFlags = require('shared/ReactFeatureFlags');
@@ -572,6 +562,7 @@ describe('DOMPluginEventSystem', () => {
           }
 
           ReactDOM.render(<Parent />, container);
+
           const second = document.body.lastChild;
           expect(second.textContent).toEqual('second');
           dispatchClickEvent(second);

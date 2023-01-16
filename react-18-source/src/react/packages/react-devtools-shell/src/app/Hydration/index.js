@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -106,7 +106,7 @@ function useInnerBaz() {
   return count;
 }
 
-export default function Hydration(): React.Node {
+export default function Hydration() {
   return (
     <Fragment>
       <h1>Hydration</h1>

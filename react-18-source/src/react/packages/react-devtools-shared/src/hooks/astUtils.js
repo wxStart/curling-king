@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -8,20 +8,15 @@
  */
 
 import {withSyncPerfMeasurements} from 'react-devtools-shared/src/PerformanceLoggingUtils';
-import traverse from '@babel/traverse';
+import traverse, {NodePath, Node} from '@babel/traverse';
+import {File} from '@babel/types';
 
 import type {HooksNode} from 'react-debug-tools/src/ReactDebugHooks';
 
-// Missing types in @babel/traverse
-type NodePath = any;
-type Node = any;
-// Missing types in @babel/types
-type File = any;
-
-export type Position = {
+export type Position = {|
   line: number,
   column: number,
-};
+|};
 
 export type SourceFileASTWithHookDetails = {
   sourceFileAST: File,
@@ -361,7 +356,7 @@ function getPotentialHookDeclarationsFromAST(sourceAST: File): NodePath[] {
  */
 export function getHookNamesMappingFromAST(
   sourceAST: File,
-): $ReadOnlyArray<{name: string, start: Position}> {
+): $ReadOnlyArray<{|name: string, start: Position|}> {
   const hookStack = [];
   const hookNames = [];
   const pushFrame = (name: string, node: Node) => {

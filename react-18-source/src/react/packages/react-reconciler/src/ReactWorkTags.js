@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -33,9 +33,7 @@ export type WorkTag =
   | 22
   | 23
   | 24
-  | 25
-  | 26
-  | 27;
+  | 25;
 
 export const FunctionComponent = 0;
 export const ClassComponent = 1;
@@ -62,5 +60,3 @@ export const OffscreenComponent = 22;
 export const LegacyHiddenComponent = 23;
 export const CacheComponent = 24;
 export const TracingMarkerComponent = 25;
-export const HostResource = 26;
-export const HostSingleton = 27;

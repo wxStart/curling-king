@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -18,10 +18,7 @@ import type {
   TouchedViewDataAtPoint,
 } from './ReactNativeTypes';
 
-import {
-  mountSafeCallback_NOT_REALLY_SAFE,
-  warnForStyleProps,
-} from './NativeMethodsMixinUtils';
+import {mountSafeCallback_NOT_REALLY_SAFE} from './NativeMethodsMixinUtils';
 import {create, diff} from './ReactNativeAttributePayload';
 
 import {dispatchEvent} from './ReactFabricEventEmitter';
@@ -55,7 +52,6 @@ const {
   unstable_DefaultEventPriority: FabricDefaultPriority,
   unstable_DiscreteEventPriority: FabricDiscretePriority,
   unstable_getCurrentEventPriority: fabricGetCurrentEventPriority,
-  setNativeProps,
 } = nativeFabricUIManager;
 
 const {get: getViewConfigForType} = ReactNativeViewConfigRegistry;
@@ -79,15 +75,15 @@ export type HydratableInstance = Instance | TextInstance;
 export type PublicInstance = ReactFabricHostComponent;
 export type Container = number;
 export type ChildSet = Object;
-export type HostContext = $ReadOnly<{
+export type HostContext = $ReadOnly<{|
   isInAParentText: boolean,
-}>;
+|}>;
 export type UpdatePayload = Object;
 
 export type TimeoutHandle = TimeoutID;
 export type NoTimeout = -1;
 
-export type RendererInspectionConfig = $ReadOnly<{
+export type RendererInspectionConfig = $ReadOnly<{|
   // Deprecated. Replaced with getInspectorDataForViewAtPoint.
   getInspectorDataForViewTag?: (tag: number) => Object,
   getInspectorDataForViewAtPoint?: (
@@ -96,28 +92,28 @@ export type RendererInspectionConfig = $ReadOnly<{
     locationY: number,
     callback: (viewData: TouchedViewDataAtPoint) => mixed,
   ) => void,
-}>;
+|}>;
 
 // TODO?: find a better place for this type to live
-export type EventListenerOptions = $ReadOnly<{
+export type EventListenerOptions = $ReadOnly<{|
   capture?: boolean,
   once?: boolean,
   passive?: boolean,
   signal: mixed, // not yet implemented
-}>;
-export type EventListenerRemoveOptions = $ReadOnly<{
+|}>;
+export type EventListenerRemoveOptions = $ReadOnly<{|
   capture?: boolean,
-}>;
+|}>;
 
 // TODO?: this will be changed in the future to be w3c-compatible and allow "EventListener" objects as well as functions.
 export type EventListener = Function;
 
 type InternalEventListeners = {
-  [string]: {
+  [string]: {|
     listener: EventListener,
     options: EventListenerOptions,
     invalidated: boolean,
-  }[],
+  |}[],
 };
 
 // TODO: Remove this conditional once all changes have propagated.
@@ -212,14 +208,12 @@ class ReactFabricHostComponent {
 
   setNativeProps(nativeProps: Object) {
     if (__DEV__) {
-      warnForStyleProps(nativeProps, this.viewConfig.validAttributes);
+      console.error(
+        'Warning: setNativeProps is not currently supported in Fabric',
+      );
     }
-    const updatePayload = create(nativeProps, this.viewConfig.validAttributes);
 
-    const {stateNode} = this._internalInstanceHandle;
-    if (stateNode != null && updatePayload != null) {
-      setNativeProps(stateNode.node, updatePayload);
-    }
+    return;
   }
 
   // This API (addEventListener, removeEventListener) attempts to adhere to the
@@ -261,8 +255,6 @@ class ReactFabricHostComponent {
     const passive = optionsObj.passive || false;
     const signal = null; // TODO: implement signal/AbortSignal
 
-    /* $FlowFixMe the old version of Flow doesn't have a good way to define an
-     * empty exact object. */
     const eventListeners: InternalEventListeners = this._eventListeners || {};
     if (this._eventListeners == null) {
       this._eventListeners = eventListeners;
@@ -321,8 +313,7 @@ class ReactFabricHostComponent {
   }
 }
 
-// $FlowFixMe[class-object-subtyping] found when upgrading Flow
-// $FlowFixMe[method-unbinding] found when upgrading Flow
+// eslint-disable-next-line no-unused-expressions
 (ReactFabricHostComponent.prototype: $ReadOnly<{...NativeMethods, ...}>);
 
 export * from 'react-reconciler/src/ReactFiberHostConfigWithNoMutation';
@@ -330,8 +321,6 @@ export * from 'react-reconciler/src/ReactFiberHostConfigWithNoHydration';
 export * from 'react-reconciler/src/ReactFiberHostConfigWithNoScopes';
 export * from 'react-reconciler/src/ReactFiberHostConfigWithNoTestSelectors';
 export * from 'react-reconciler/src/ReactFiberHostConfigWithNoMicrotasks';
-export * from 'react-reconciler/src/ReactFiberHostConfigWithNoResources';
-export * from 'react-reconciler/src/ReactFiberHostConfigWithNoSingletons';
 
 export function appendInitialChild(
   parentInstance: Instance,
@@ -415,6 +404,7 @@ export function finalizeInitialChildren(
   parentInstance: Instance,
   type: string,
   props: Props,
+  rootContainerInstance: Container,
   hostContext: HostContext,
 ): boolean {
   return false;
@@ -429,6 +419,7 @@ export function getRootHostContext(
 export function getChildHostContext(
   parentHostContext: HostContext,
   type: string,
+  rootContainerInstance: Container,
 ): HostContext {
   const prevIsInAParentText = parentHostContext.isInAParentText;
   const isInAParentText =
@@ -462,6 +453,7 @@ export function prepareUpdate(
   type: string,
   oldProps: Props,
   newProps: Props,
+  rootContainerInstance: Container,
   hostContext: HostContext,
 ): null | Object {
   const viewConfig = instance.canonical.viewConfig;
@@ -601,7 +593,7 @@ export function replaceContainerChildren(
   newChildren: ChildSet,
 ): void {}
 
-export function getInstanceFromNode(node: any): empty {
+export function getInstanceFromNode(node: any) {
   throw new Error('Not yet implemented.');
 }
 
@@ -618,17 +610,5 @@ export function preparePortalMount(portalInstance: Instance): void {
 }
 
 export function detachDeletedInstance(node: Instance): void {
-  // noop
-}
-
-export function requestPostPaintCallback(callback: (time: number) => void) {
-  // noop
-}
-
-export function prepareRendererToRender(container: Container): void {
-  // noop
-}
-
-export function resetRendererAfterRender() {
   // noop
 }

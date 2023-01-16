@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -7,24 +7,23 @@
  * @flow strict
  */
 
-type Heap<T: Node> = Array<T>;
-type Node = {
+type Heap = Array<Node>;
+type Node = {|
   id: number,
   sortIndex: number,
-  ...
-};
+|};
 
-export function push<T: Node>(heap: Heap<T>, node: T): void {
+export function push(heap: Heap, node: Node): void {
   const index = heap.length;
   heap.push(node);
   siftUp(heap, node, index);
 }
 
-export function peek<T: Node>(heap: Heap<T>): T | null {
+export function peek(heap: Heap): Node | null {
   return heap.length === 0 ? null : heap[0];
 }
 
-export function pop<T: Node>(heap: Heap<T>): T | null {
+export function pop(heap: Heap): Node | null {
   if (heap.length === 0) {
     return null;
   }
@@ -37,7 +36,7 @@ export function pop<T: Node>(heap: Heap<T>): T | null {
   return first;
 }
 
-function siftUp<T: Node>(heap: Heap<T>, node: T, i: number): void {
+function siftUp(heap, node, i) {
   let index = i;
   while (index > 0) {
     const parentIndex = (index - 1) >>> 1;
@@ -54,7 +53,7 @@ function siftUp<T: Node>(heap: Heap<T>, node: T, i: number): void {
   }
 }
 
-function siftDown<T: Node>(heap: Heap<T>, node: T, i: number): void {
+function siftDown(heap, node, i) {
   let index = i;
   const length = heap.length;
   const halfLength = length >>> 1;
@@ -86,7 +85,7 @@ function siftDown<T: Node>(heap: Heap<T>, node: T, i: number): void {
   }
 }
 
-function compare(a: Node, b: Node) {
+function compare(a, b) {
   // Compare sort index first, then task id.
   const diff = a.sortIndex - b.sortIndex;
   return diff !== 0 ? diff : a.id - b.id;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -16,11 +16,7 @@ const SHOW_DURATION = 2000;
 let timeoutID: TimeoutID | null = null;
 let overlay: Overlay | null = null;
 
-export function hideOverlay(agent: Agent) {
-  if (window.document == null) {
-    agent.emit('hideNativeHighlight');
-    return;
-  }
+export function hideOverlay() {
   timeoutID = null;
 
   if (overlay !== null) {
@@ -35,10 +31,8 @@ export function showOverlay(
   agent: Agent,
   hideAfterTimeout: boolean,
 ) {
+  // TODO (npm-packages) Detect RN and support it somehow
   if (window.document == null) {
-    if (elements != null && elements[0] != null) {
-      agent.emit('showNativeHighlight', elements[0]);
-    }
     return;
   }
 
@@ -57,6 +51,6 @@ export function showOverlay(
   overlay.inspect(elements, componentName);
 
   if (hideAfterTimeout) {
-    timeoutID = setTimeout(() => hideOverlay(agent), SHOW_DURATION);
+    timeoutID = setTimeout(hideOverlay, SHOW_DURATION);
   }
 }

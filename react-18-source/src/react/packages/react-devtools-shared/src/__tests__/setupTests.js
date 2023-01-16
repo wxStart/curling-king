@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -52,7 +52,8 @@ env.beforeEach(() => {
   const {installHook} = require('react-devtools-shared/src/hook');
   const {
     getDefaultComponentFilters,
-    setSavedComponentFilters,
+    saveComponentFilters,
+    setShowInlineWarningsAndErrors,
   } = require('react-devtools-shared/src/utils');
 
   // Fake timers let us flush Bridge operations between setup and assertions.
@@ -117,10 +118,11 @@ env.beforeEach(() => {
   };
 
   // Initialize filters to a known good state.
-  setSavedComponentFilters(getDefaultComponentFilters());
+  saveComponentFilters(getDefaultComponentFilters());
   global.__REACT_DEVTOOLS_COMPONENT_FILTERS__ = getDefaultComponentFilters();
 
   // Also initialize inline warnings so that we can test them.
+  setShowInlineWarningsAndErrors(true);
   global.__REACT_DEVTOOLS_SHOW_INLINE_WARNINGS_AND_ERRORS__ = true;
 
   installHook(global);

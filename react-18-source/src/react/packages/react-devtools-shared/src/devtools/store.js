@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -23,7 +23,7 @@ import {
 import {ElementTypeRoot} from '../types';
 import {
   getSavedComponentFilters,
-  setSavedComponentFilters,
+  saveComponentFilters,
   separateDisplayNameAndHOCs,
   shallowDiffers,
   utfDecodeString,
@@ -62,9 +62,9 @@ const LOCAL_STORAGE_COLLAPSE_ROOTS_BY_DEFAULT_KEY =
 const LOCAL_STORAGE_RECORD_CHANGE_DESCRIPTIONS_KEY =
   'React::DevTools::recordChangeDescriptions';
 
-type ErrorAndWarningTuples = Array<{id: number, index: number}>;
+type ErrorAndWarningTuples = Array<{|id: number, index: number|}>;
 
-type Config = {
+type Config = {|
   checkBridgeProtocolCompatibility?: boolean,
   isProfiling?: boolean,
   supportsNativeInspection?: boolean,
@@ -72,20 +72,20 @@ type Config = {
   supportsReloadAndProfile?: boolean,
   supportsTimeline?: boolean,
   supportsTraceUpdates?: boolean,
-};
+|};
 
-export type Capabilities = {
+export type Capabilities = {|
   supportsBasicProfiling: boolean,
   hasOwnerMetadata: boolean,
   supportsStrictMode: boolean,
   supportsTimeline: boolean,
-};
+|};
 
 /**
  * The store is the single source of truth for updates from the backend.
  * ContextProviders can subscribe to the Store for specific things they want to provide.
  */
-export default class Store extends EventEmitter<{
+export default class Store extends EventEmitter<{|
   backendVersion: [],
   collapseNodesByDefault: [],
   componentFilters: [],
@@ -99,7 +99,7 @@ export default class Store extends EventEmitter<{
   supportsReloadAndProfile: [],
   unsupportedBridgeProtocolDetected: [],
   unsupportedRendererVersionDetected: [],
-}> {
+|}> {
   // If the backend version is new enough to report its (NPM) version, this is it.
   // This version may be displayed by the frontend for debugging purposes.
   _backendVersion: string | null = null;
@@ -119,7 +119,7 @@ export default class Store extends EventEmitter<{
   // Map of ID to number of recorded error and warning message IDs.
   _errorsAndWarnings: Map<
     number,
-    {errorCount: number, warningCount: number},
+    {|errorCount: number, warningCount: number|},
   > = new Map();
 
   // At least one of the injected renderers contains (DEV only) owner metadata.
@@ -365,7 +365,7 @@ export default class Store extends EventEmitter<{
     this._componentFilters = value;
 
     // Update persisted filter preferences stored in localStorage.
-    setSavedComponentFilters(value);
+    saveComponentFilters(value);
 
     // Notify the renderer that filter preferences have changed.
     // This is an expensive operation; it unmounts and remounts the entire tree,
@@ -553,7 +553,7 @@ export default class Store extends EventEmitter<{
   }
 
   // Returns a tuple of [id, index]
-  getElementsWithErrorsAndWarnings(): Array<{id: number, index: number}> {
+  getElementsWithErrorsAndWarnings(): Array<{|id: number, index: number|}> {
     if (this._cachedErrorAndWarningTuples !== null) {
       return this._cachedErrorAndWarningTuples;
     } else {
@@ -586,7 +586,7 @@ export default class Store extends EventEmitter<{
 
   getErrorAndWarningCountForElementID(
     id: number,
-  ): {errorCount: number, warningCount: number} {
+  ): {|errorCount: number, warningCount: number|} {
     return this._errorsAndWarnings.get(id) || {errorCount: 0, warningCount: 0};
   }
 
@@ -681,7 +681,6 @@ export default class Store extends EventEmitter<{
             let depth = 0;
             while (parentID > 0) {
               if (parentID === ownerID || unsortedIDs.has(parentID)) {
-                // $FlowFixMe[unsafe-addition] addition with possible null/undefined value
                 depth = depthMap.get(parentID) + 1;
                 depthMap.set(id, depth);
                 break;
@@ -763,7 +762,7 @@ export default class Store extends EventEmitter<{
 
           const weightDelta = 1 - element.weight;
 
-          let parentElement: void | Element = ((this._idToElement.get(
+          let parentElement = ((this._idToElement.get(
             element.parentID,
           ): any): Element);
           while (parentElement != null) {
@@ -789,7 +788,7 @@ export default class Store extends EventEmitter<{
               : currentElement.weight;
             const weightDelta = newWeight - oldWeight;
 
-            let parentElement: void | Element = ((this._idToElement.get(
+            let parentElement = ((this._idToElement.get(
               currentElement.parentID,
             ): any): Element);
             while (parentElement != null) {
@@ -806,10 +805,8 @@ export default class Store extends EventEmitter<{
 
           currentElement =
             currentElement.parentID !== 0
-              ? // $FlowFixMe[incompatible-type] found when upgrading Flow
-                this.getElementByID(currentElement.parentID)
-              : // $FlowFixMe[incompatible-type] found when upgrading Flow
-                null;
+              ? this.getElementByID(currentElement.parentID)
+              : null;
         }
       }
 
@@ -830,10 +827,10 @@ export default class Store extends EventEmitter<{
     }
   }
 
-  _adjustParentTreeWeight: (
+  _adjustParentTreeWeight = (
     parentElement: Element | null,
     weightDelta: number,
-  ) => void = (parentElement, weightDelta) => {
+  ) => {
     let isInsideCollapsedSubTree = false;
 
     while (parentElement != null) {
@@ -871,17 +868,20 @@ export default class Store extends EventEmitter<{
     }
   }
 
-  onBridgeNativeStyleEditorSupported: ({
+  onBridgeNativeStyleEditorSupported = ({
+    isSupported,
+    validAttributes,
+  }: {|
     isSupported: boolean,
     validAttributes: ?$ReadOnlyArray<string>,
-  }) => void = ({isSupported, validAttributes}) => {
+  |}) => {
     this._isNativeStyleEditorSupported = isSupported;
     this._nativeStyleEditorValidAttributes = validAttributes || null;
 
     this.emit('supportsNativeStyleEditor');
   };
 
-  onBridgeOperations: (operations: Array<number>) => void = operations => {
+  onBridgeOperations = (operations: Array<number>) => {
     if (__DEBUG__) {
       console.groupCollapsed('onBridgeOperations');
       debug('onBridgeOperations', operations.join(','));
@@ -1327,15 +1327,15 @@ export default class Store extends EventEmitter<{
   // this message enables the backend to override the frontend's current ("saved") filters.
   // This action should also override the saved filters too,
   // else reloading the frontend without reloading the backend would leave things out of sync.
-  onBridgeOverrideComponentFilters: (
+  onBridgeOverrideComponentFilters = (
     componentFilters: Array<ComponentFilter>,
-  ) => void = componentFilters => {
+  ) => {
     this._componentFilters = componentFilters;
 
-    setSavedComponentFilters(componentFilters);
+    saveComponentFilters(componentFilters);
   };
 
-  onBridgeShutdown: () => void = () => {
+  onBridgeShutdown = () => {
     if (__DEBUG__) {
       debug('onBridgeShutdown', 'unsubscribing from Bridge');
     }
@@ -1372,36 +1372,30 @@ export default class Store extends EventEmitter<{
     }
   };
 
-  onBackendStorageAPISupported: (
-    isBackendStorageAPISupported: boolean,
-  ) => void = isBackendStorageAPISupported => {
+  onBackendStorageAPISupported = (isBackendStorageAPISupported: boolean) => {
     this._isBackendStorageAPISupported = isBackendStorageAPISupported;
 
     this.emit('supportsReloadAndProfile');
   };
 
-  onBridgeSynchronousXHRSupported: (
-    isSynchronousXHRSupported: boolean,
-  ) => void = isSynchronousXHRSupported => {
+  onBridgeSynchronousXHRSupported = (isSynchronousXHRSupported: boolean) => {
     this._isSynchronousXHRSupported = isSynchronousXHRSupported;
 
     this.emit('supportsReloadAndProfile');
   };
 
-  onBridgeUnsupportedRendererVersion: () => void = () => {
+  onBridgeUnsupportedRendererVersion = () => {
     this._unsupportedRendererVersionDetected = true;
 
     this.emit('unsupportedRendererVersionDetected');
   };
 
-  onBridgeBackendVersion: (backendVersion: string) => void = backendVersion => {
+  onBridgeBackendVersion = (backendVersion: string) => {
     this._backendVersion = backendVersion;
     this.emit('backendVersion');
   };
 
-  onBridgeProtocol: (
-    bridgeProtocol: BridgeProtocol,
-  ) => void = bridgeProtocol => {
+  onBridgeProtocol = (bridgeProtocol: BridgeProtocol) => {
     if (this._onBridgeProtocolTimeoutID !== null) {
       clearTimeout(this._onBridgeProtocolTimeoutID);
       this._onBridgeProtocolTimeoutID = null;
@@ -1416,7 +1410,7 @@ export default class Store extends EventEmitter<{
     }
   };
 
-  onBridgeProtocolTimeout: () => void = () => {
+  onBridgeProtocolTimeout = () => {
     this._onBridgeProtocolTimeoutID = null;
 
     // If we timed out, that indicates the backend predates the bridge protocol,

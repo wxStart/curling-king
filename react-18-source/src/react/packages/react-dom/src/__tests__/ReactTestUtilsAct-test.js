@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -503,15 +503,16 @@ function runActTests(label, render, unmount, rerender) {
       // @gate __DEV__
       it('warns if you try to interleave multiple act calls', async () => {
         spyOnDevAndProd(console, 'error');
-
-        await Promise.all([
-          act(async () => {
+        // let's try to cheat and spin off a 'thread' with an act call
+        (async () => {
+          await act(async () => {
             await sleep(50);
-          }),
-          act(async () => {
-            await sleep(100);
-          }),
-        ]);
+          });
+        })();
+
+        await act(async () => {
+          await sleep(100);
+        });
 
         await sleep(150);
         if (__DEV__) {

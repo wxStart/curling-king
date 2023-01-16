@@ -1,6 +1,6 @@
 /**
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -119,9 +119,7 @@ export function copyWithSet(
   return updated;
 }
 
-export function getEffectDurations(
-  root: Object,
-): {effectDuration: any | null, passiveEffectDuration: any | null} {
+export function getEffectDurations(root: Object) {
   // Profiling durations are only available for certain builds.
   // If available, they'll be stored on the HostRoot.
   let effectDuration = null;

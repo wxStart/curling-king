@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -14,7 +14,6 @@ const ReactDOMServerIntegrationUtils = require('./utils/ReactDOMServerIntegratio
 let React;
 let ReactDOM;
 let ReactDOMServer;
-let ReactFeatureFlags;
 let ReactTestUtils;
 
 function initModules() {
@@ -23,7 +22,6 @@ function initModules() {
   React = require('react');
   ReactDOM = require('react-dom');
   ReactDOMServer = require('react-dom/server');
-  ReactFeatureFlags = require('shared/ReactFeatureFlags');
   ReactTestUtils = require('react-dom/test-utils');
 
   // Make them available to the helpers.
@@ -93,22 +91,10 @@ describe('ReactDOMServerIntegration', () => {
       root.innerHTML = markup;
       let component = null;
       resetModules();
-      await expect(async () => {
-        await asyncReactDOMRender(
-          <RefsComponent ref={e => (component = e)} />,
-          root,
-          true,
-        );
-      }).toErrorDev(
-        ReactFeatureFlags.warnAboutStringRefs
-          ? [
-              'Warning: Component "RefsComponent" contains the string ref "myDiv". ' +
-                'Support for string refs will be removed in a future major release. ' +
-                'We recommend using useRef() or createRef() instead. ' +
-                'Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref\n' +
-                '    in RefsComponent (at **)',
-            ]
-          : [],
+      await asyncReactDOMRender(
+        <RefsComponent ref={e => (component = e)} />,
+        root,
+        true,
       );
       expect(component.refs.myDiv).toBe(root.firstChild);
     });

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -46,8 +46,6 @@ describe('ReactContextValidator', () => {
     };
 
     class ComponentInFooBarContext extends React.Component {
-      childRef = React.createRef();
-
       getChildContext() {
         return {
           foo: 'abc',
@@ -56,7 +54,7 @@ describe('ReactContextValidator', () => {
       }
 
       render() {
-        return <Component ref={this.childRef} />;
+        return <Component ref="child" />;
       }
     }
     ComponentInFooBarContext.childContextTypes = {
@@ -67,7 +65,7 @@ describe('ReactContextValidator', () => {
     const instance = ReactTestUtils.renderIntoDocument(
       <ComponentInFooBarContext />,
     );
-    expect(instance.childRef.current.context).toEqual({foo: 'abc'});
+    expect(instance.refs.child.context).toEqual({foo: 'abc'});
   });
 
   it('should pass next context to lifecycles', () => {

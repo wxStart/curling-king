@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -35,16 +35,16 @@ export type Instance = ReactNativeFiberHostComponent;
 export type TextInstance = number;
 export type HydratableInstance = Instance | TextInstance;
 export type PublicInstance = Instance;
-export type HostContext = $ReadOnly<{
+export type HostContext = $ReadOnly<{|
   isInAParentText: boolean,
-}>;
+|}>;
 export type UpdatePayload = Object; // Unused
 export type ChildSet = void; // Unused
 
 export type TimeoutHandle = TimeoutID;
 export type NoTimeout = -1;
 
-export type RendererInspectionConfig = $ReadOnly<{
+export type RendererInspectionConfig = $ReadOnly<{|
   // Deprecated. Replaced with getInspectorDataForViewAtPoint.
   getInspectorDataForViewTag?: (tag: number) => Object,
   getInspectorDataForViewAtPoint?: (
@@ -53,7 +53,7 @@ export type RendererInspectionConfig = $ReadOnly<{
     locationY: number,
     callback: (viewData: TouchedViewDataAtPoint) => mixed,
   ) => void,
-}>;
+|}>;
 
 const UPDATE_SIGNAL = {};
 if (__DEV__) {
@@ -89,8 +89,6 @@ export * from 'react-reconciler/src/ReactFiberHostConfigWithNoHydration';
 export * from 'react-reconciler/src/ReactFiberHostConfigWithNoScopes';
 export * from 'react-reconciler/src/ReactFiberHostConfigWithNoTestSelectors';
 export * from 'react-reconciler/src/ReactFiberHostConfigWithNoMicrotasks';
-export * from 'react-reconciler/src/ReactFiberHostConfigWithNoResources';
-export * from 'react-reconciler/src/ReactFiberHostConfigWithNoSingletons';
 
 export function appendInitialChild(
   parentInstance: Instance,
@@ -168,6 +166,7 @@ export function finalizeInitialChildren(
   parentInstance: Instance,
   type: string,
   props: Props,
+  rootContainerInstance: Container,
   hostContext: HostContext,
 ): boolean {
   // Don't send a no-op message over the bridge.
@@ -200,6 +199,7 @@ export function getRootHostContext(
 export function getChildHostContext(
   parentHostContext: HostContext,
   type: string,
+  rootContainerInstance: Container,
 ): HostContext {
   const prevIsInAParentText = parentHostContext.isInAParentText;
   const isInAParentText =
@@ -230,6 +230,7 @@ export function prepareUpdate(
   type: string,
   oldProps: Props,
   newProps: Props,
+  rootContainerInstance: Container,
   hostContext: HostContext,
 ): null | Object {
   return UPDATE_SIGNAL;
@@ -493,7 +494,7 @@ export function unhideTextInstance(
   throw new Error('Not yet implemented.');
 }
 
-export function getInstanceFromNode(node: any): empty {
+export function getInstanceFromNode(node: any) {
   throw new Error('Not yet implemented.');
 }
 
@@ -510,17 +511,5 @@ export function preparePortalMount(portalInstance: Instance): void {
 }
 
 export function detachDeletedInstance(node: Instance): void {
-  // noop
-}
-
-export function requestPostPaintCallback(callback: (time: number) => void) {
-  // noop
-}
-
-export function prepareRendererToRender(container: Container): void {
-  // noop
-}
-
-export function resetRendererAfterRender(): void {
   // noop
 }
