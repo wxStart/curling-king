@@ -40,6 +40,10 @@ import {
   stopLoggingProfilingEvents,
   startLoggingProfilingEvents,
 } from '../SchedulerProfiling';
+import {
+  unstable_yieldValue,
+  unstable_setDisableYieldValue,
+} from './SchedulerMock';
 
 let getCurrentTime;
 const hasPerformanceNow =
@@ -619,6 +623,8 @@ export {
   unstable_getFirstCallbackNode,
   getCurrentTime as unstable_now,
   forceFrameRate as unstable_forceFrameRate,
+  unstable_yieldValue,
+  unstable_setDisableYieldValue,
 };
 
 export const unstable_Profiling = enableProfiling
