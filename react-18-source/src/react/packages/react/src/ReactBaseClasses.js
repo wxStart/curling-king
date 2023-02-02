@@ -64,7 +64,6 @@ Component.prototype.setState = function(partialState, callback) {
         'function which returns an object of state variables.',
     );
   }
-
   this.updater.enqueueSetState(this, partialState, callback, 'setState');
 };
 

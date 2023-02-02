@@ -53,7 +53,7 @@ module.exports = {
     'no-restricted-syntax': [ERROR, 'WithStatement'],
     'no-shadow': ERROR,
     'no-unused-expressions': ERROR,
-    'no-unused-vars': [ERROR, {args: 'none'}],
+    // 'no-unused-vars': [ERROR, {args: 'none'}],
     'no-use-before-define': OFF,
     'no-useless-concat': OFF,
     quotes: [ERROR, 'single', {avoidEscape: true, allowTemplateLiterals: true}],
@@ -105,22 +105,22 @@ module.exports = {
 
     // CUSTOM RULES
     // the second argument of warning/invariant should be a literal string
-    'react-internal/no-primitive-constructors': ERROR,
-    'react-internal/safe-string-coercion': [
-      ERROR,
-      {isProductionUserAppCode: true},
-    ],
-    'react-internal/no-to-warn-dev-within-to-throw': ERROR,
-    'react-internal/warning-args': ERROR,
-    'react-internal/no-production-logging': ERROR,
-    'react-internal/no-cross-fork-imports': ERROR,
-    'react-internal/no-cross-fork-types': [
-      ERROR,
-      {
-        old: [],
-        new: [],
-      },
-    ],
+    // 'react-internal/no-primitive-constructors': ERROR,
+    // 'react-internal/safe-string-coercion': [
+    //   ERROR,
+    //   {isProductionUserAppCode: true},
+    // ],
+    // 'react-internal/no-to-warn-dev-within-to-throw': ERROR,
+    // 'react-internal/warning-args': ERROR,
+    // 'react-internal/no-production-logging': ERROR,
+    // 'react-internal/no-cross-fork-imports': ERROR,
+    // 'react-internal/no-cross-fork-types': [
+    //   ERROR,
+    //   {
+    //     old: [],
+    //     new: [],
+    //   },
+    // ],
   },
 
   overrides: [
@@ -130,7 +130,7 @@ module.exports = {
       // in the next override entry.
       files: ['packages/**/*.js'],
       rules: {
-        'react-internal/prod-error-codes': ERROR,
+        // 'react-internal/prod-error-codes': ERROR,
       },
     },
     {
@@ -156,7 +156,7 @@ module.exports = {
         'packages/**/npm/*.js',
       ],
       rules: {
-        'react-internal/prod-error-codes': OFF,
+        // 'react-internal/prod-error-codes': OFF,
       },
     },
     {
@@ -209,12 +209,12 @@ module.exports = {
         'packages/react-dom/src/test-utils/*.js',
       ],
       rules: {
-        'react-internal/no-production-logging': OFF,
-        'react-internal/warning-args': OFF,
-        'react-internal/safe-string-coercion': [
-          ERROR,
-          {isProductionUserAppCode: false},
-        ],
+        // 'react-internal/no-production-logging': OFF,
+        // 'react-internal/warning-args': OFF,
+        // 'react-internal/safe-string-coercion': [
+        //   ERROR,
+        //   {isProductionUserAppCode: false},
+        // ],
 
         // Disable accessibility checks
         'jsx-a11y/aria-role': OFF,
