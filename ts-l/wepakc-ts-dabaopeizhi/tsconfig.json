@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "module": "ES2015",
+    "target": "ES3", 
+    "ignoreDeprecations": "5.0",
+    "strict": true
+  }
+}

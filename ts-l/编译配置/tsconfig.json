@@ -1,0 +1,28 @@
+/***
+    
+*/
+{
+  // 允许编译的文件
+  "include": ["./src/**/*"],
+  // 不需要被编译的文件ƒ
+  //   "exclude": ["./src/about/*"]
+
+  //编译的配置项
+  "compilerOptions": {
+    "target": "ES3",
+    "ignoreDeprecations": "5.0",
+    "module": "ES2015",
+    "outDir": "./dist",
+    // "outFile": "./dist/aa.js"
+    "allowJs": false,
+    "checkJs": false,
+    "removeComments": false,
+    "noEmit": false,
+    "noEmitOnError": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": false,
+    "strict": false
+  }
+}
