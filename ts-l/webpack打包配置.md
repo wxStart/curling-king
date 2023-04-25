@@ -17,7 +17,7 @@
 ```
 
 ### babel转换
-`npm i -D @bable/core  @babel/preset-env  core-js babel-loader` 
+`npm i -D @babel/core  @babel/preset-env  core-js babel-loader` 
 ```
     module: {
     rules: [
