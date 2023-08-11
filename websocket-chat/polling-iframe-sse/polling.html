@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>轮询：定时进行网络请求</div>
+    <div id="time"></div>
+    <script>
+      setInterval(() => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/time", true);
+        xhr.onload = function () {
+          time.innerHTML = xhr.responseText;
+        };
+        xhr.send();
+      }, 1000);
+    </script>
+  </body>
+</html>

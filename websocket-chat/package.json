@@ -1,0 +1,19 @@
+{
+  "name": "websocket-chat",
+  "version": "1.0.0",
+  "description": "http特点：无状态协议、每个请求都是独立的、请求应答模式、服务器无法主动给客户端推送消息，属于半双工通讯",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
+    "ws": "^8.13.0"
+  }
+}

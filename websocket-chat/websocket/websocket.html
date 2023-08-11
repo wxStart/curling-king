@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Websocket页面</title>
+  </head>
+  <body>
+    <script>
+      const ws = new WebSocket("ws://10.32.18.100:3000");
+
+      ws.onopen = function () {
+        console.log("Connection opend");
+        ws.send("hello server11ssad");
+      };
+
+      ws.onmessage = function (e) {
+        console.log('e: ', e);
+        console.log("服务器发送的数据：" + e.data);
+      };
+    </script>
+  </body>
+</html>

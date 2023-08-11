@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="time"></div>
+    <script>
+      const eventSource = new EventSource("http://localhost:3000/time");
+
+      eventSource.onopen = function () {
+        console.log("连接成功 onopen: ");
+      };
+      eventSource.onmessage = function (e) {
+        console.log("e: ", e);
+        time.innerHTML = e.data;
+      };
+      eventSource.addEventListener("my", (e) => {
+        console.log("e:my ", e);
+        time.innerHTML = e.data;
+      });
+    </script>
+  </body>
+</html>
