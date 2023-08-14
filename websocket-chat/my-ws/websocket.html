@@ -8,14 +8,18 @@
   <body>
     <script>
       const ws = new WebSocket("ws://localhost:3000");
+      let str = "str";
+      for (let index = 0; index < 100; index++) {
+        str += "abcdefgH" + index;
+      }
 
       ws.onopen = function () {
         console.log("Connection opend");
-        ws.send("hello server11ssad");
+        ws.send(str);
       };
 
       ws.onmessage = function (e) {
-        console.log('e: ', e);
+        console.log("e: ", e);
         console.log("服务器发送的数据：" + e.data);
       };
     </script>

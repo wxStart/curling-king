@@ -2,6 +2,29 @@ import net from "net";
 import crypto from "crypto";
 const number = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
+const OPCODE = {
+  TEXT: 1,
+  BUFFER: 2,
+};
+const send = function (socket, payload) {
+  let opcode;
+  if (Buffer.isBuffer(payload)) {
+    opcode = OPCODE.BUFFER;
+  } else {
+    opcode = OPCODE.TEXT;
+    payload = Buffer.from(payload);
+  }
+
+  let length = payload.length;
+
+  let buffer = Buffer.alloc(length + 2);
+  buffer[0] = 0b10000000 | opcode;
+  buffer[1] = length;
+  payload.copy(buffer, 2);
+
+  socket.write(buffer);
+};
+
 const acceptKey = crypto
   .createHash("sha1")
   .update("/0bkQMzhS4idOJQjNE66dw==" + number)
@@ -33,7 +56,6 @@ const server = net.createServer(function (socket) {
       socket.write(response); // 响应报文
       // 解析后续的websocket数据
       socket.on("data", function (buffer) {
-
         // 一个字节是八位
         const FIN = (buffer[0] & 0b10000000) === 0b10000000;
         console.log("FIN: ", FIN);
@@ -52,7 +74,6 @@ const server = net.createServer(function (socket) {
         console.log("PAYLOAD: ", PAYLOAD);
 
         for (let index = 0; index < PAYLOAD.length; index++) {
-
           // 掩码有点像切砖款
           // 原来内容：  'bc cd ee aa d1 b1 c3 ee aa df ff'  掩码内容：'ab c2 d2 dd'
           /**
@@ -63,14 +84,12 @@ const server = net.createServer(function (socket) {
           PAYLOAD[index] = PAYLOAD[index] ^ MASK_KEY[index % 4]; // 掩码4个字节
           // console.log(' PAYLOAD[i]: ',  PAYLOAD[index]);
         }
-        console.log('PAYLOAD: ', PAYLOAD.toString()); // 客户端发送给服务端的东西
+        console.log("PAYLOAD: ", PAYLOAD.toString()); // 客户端发送给服务端的东西
 
-        // socket.write(PAYLOAD); 
-        console.log('PAYLOAD: ', PAYLOAD);
-      
-
+        // socket.write(PAYLOAD);
+        console.log("PAYLOAD: ", PAYLOAD);
+        send(socket, "我写了一次文本内容");
       });
-
     }
   });
 });
