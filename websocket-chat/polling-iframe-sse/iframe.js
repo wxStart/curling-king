@@ -10,8 +10,11 @@ app.get("/time", function (req, res) {
     res.write(
       `
             <script>
-                document.domain='localhost'
-                parent.document.getElementById('time').innerHTML = new Date().toLocaleString() 
+                document.domain='localhost';
+                var data = new Date().toLocaleString()
+                parent.document.getElementById('time').innerHTML = data;
+                // 调用父window中的 getIframeData 方法
+                parent.getIframeData(data) 
             </script>
             `
     );

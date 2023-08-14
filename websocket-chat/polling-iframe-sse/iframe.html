@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    <div> iframe ：可以保证实时性，只建立一个链接</div>
+  </head>
+  <body>
+    <div>iframe ：可以保证实时性，只建立一个链接</div>
     <div id="time"></div>
+    <div id="itme2"></div>
     <script>
-        document.domain='localhost'
+      document.domain = "localhost";
+
+      window.getIframeData = function (data) {
+        console.log("data: ", data);
+        itme2.innerHTML = `这里是通过函数调用的${data}`;
+      };
     </script>
     <iframe src="http://localhost:3000/time" frameborder="0"></iframe>
-</body>
+  </body>
 </html>
