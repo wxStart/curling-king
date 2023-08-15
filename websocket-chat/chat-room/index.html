@@ -26,11 +26,20 @@
         border: 1px solid #ededed;
         margin-bottom: 12px !important;
       }
+      .SYS {
+        color: red;
+      }
+      .SL {
+        color: rosybrown;
+      }
       .flex-c {
         display: flex;
         flex-direction: column;
       }
       .user {
+        color: aquamarine;
+      }
+      .userlist {
         color: aquamarine;
       }
     </style>
@@ -55,17 +64,18 @@
             >
               发送
             </button>
+            <button
+              type="button"
+              id="leave"
+              class="btn btn-danger input-group-text"
+            >
+              离开
+            </button>
           </div>
         </div>
         <div class="col-3 full flex-c">
           <div>用户列表</div>
-          <ul class="list-group">
-            <li class="list-group-item">An item</li>
-            <li class="list-group-item">A second item</li>
-            <li class="list-group-item">A third item</li>
-            <li class="list-group-item">A fourth item</li>
-            <li class="list-group-item">And a fifth one</li>
-          </ul>
+          <ul id="users" class="list-group"></ul>
         </div>
       </div>
     </div>
@@ -76,6 +86,9 @@
         let btn = document.getElementById("sendBtn");
         let input = document.getElementById("sendText");
         let content = document.getElementById("content");
+
+        let users = document.getElementById("users");
+
         const socket = io.connect("/chat"); // 命名空间
         socket.on("connect", function () {
           console.log("链接成功");
@@ -83,24 +96,56 @@
         socket.on("message", function (messageObj) {
           console.log("messageObj: ", messageObj);
           const li = document.createElement("li");
-          li.className = "list-group-item";
+          li.className = `list-group-item ${messageObj.messageType}`;
           li.innerHTML = `<span class="user">${messageObj.user}</span>: ${messageObj.content}  <span>${messageObj.createTiime}</span>`;
           content.appendChild(li, null);
         });
         socket.on("disconnect", function () {
-          console.log("链接成功");
+          console.log("断开连接");
+        });
+
+        socket.on("allUser", function (userlist) {
+          console.log("users: ", userlist);
+          userlist.forEach((user) => {
+            const li = document.createElement("li");
+            li.className = "list-group-item userlist";
+            li.id = "user" + user;
+            li.innerHTML = user;
+            users.appendChild(li, null);
+          });
+        });
+
+        socket.on("join", function (user) {
+          const li = document.createElement("li");
+          li.className = "list-group-item userlist";
+          li.id = "user" + user;
+          li.innerHTML = user;
+          users.appendChild(li, null);
+        });
+
+        socket.on("leave", function (user) {
+          let cur = document.getElementById("user" + user);
+          cur && users.removeChild(cur);
         });
 
         btn.addEventListener("click", function () {
           const text = input.value;
-          socket.send(text);
+          if (text) {
+            socket.send(text);
+            input.value = "";
+          }
+        });
+
+        leave.addEventListener("click", function () {
+          socket.emit("leave");
+          socket.disconnect();
         });
 
         content.addEventListener("click", clickUser);
 
         function clickUser(e) {
           if (e.target.className === "user") {
-            input.value = `@${e.target.innerHTML}`
+            input.value = `@${e.target.innerHTML} `;
           }
         }
       };
