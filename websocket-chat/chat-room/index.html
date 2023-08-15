@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>⑧号当铺</title>
+    <link
+      href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.2.3/css/bootstrap.css"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+      .full {
+        height: 100%;
+      }
+      .list-group {
+        flex: 1 0 300px;
+        overflow-y: auto;
+        padding: 20px;
+      }
+      ul {
+        border: 1px solid #ededed;
+        margin-bottom: 12px !important;
+      }
+      .flex-c {
+        display: flex;
+        flex-direction: column;
+      }
+      .user {
+        color: aquamarine;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container full">
+      <div class="row full">
+        <div class="col-9 full flex-c">
+          <ul id="content" class="list-group"></ul>
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              id="sendText"
+              class="form-control"
+              aria-label="Sizing example input"
+              aria-describedby="inputGroup-sizing-default"
+            />
+            <button
+              type="button"
+              id="sendBtn"
+              class="btn btn-primary input-group-text"
+            >
+              发送
+            </button>
+          </div>
+        </div>
+        <div class="col-3 full flex-c">
+          <div>用户列表</div>
+          <ul class="list-group">
+            <li class="list-group-item">An item</li>
+            <li class="list-group-item">A second item</li>
+            <li class="list-group-item">A third item</li>
+            <li class="list-group-item">A fourth item</li>
+            <li class="list-group-item">And a fifth one</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      window.onload = function () {
+        let btn = document.getElementById("sendBtn");
+        let input = document.getElementById("sendText");
+        let content = document.getElementById("content");
+        const socket = io.connect("/chat"); // 命名空间
+        socket.on("connect", function () {
+          console.log("链接成功");
+        });
+        socket.on("message", function (messageObj) {
+          console.log("messageObj: ", messageObj);
+          const li = document.createElement("li");
+          li.className = "list-group-item";
+          li.innerHTML = `<span class="user">${messageObj.user}</span>: ${messageObj.content}  <span>${messageObj.createTiime}</span>`;
+          content.appendChild(li, null);
+        });
+        socket.on("disconnect", function () {
+          console.log("链接成功");
+        });
+
+        btn.addEventListener("click", function () {
+          const text = input.value;
+          socket.send(text);
+        });
+
+        content.addEventListener("click", clickUser);
+
+        function clickUser(e) {
+          if (e.target.className === "user") {
+            input.value = `@${e.target.innerHTML}`
+          }
+        }
+      };
+    </script>
+  </body>
+</html>

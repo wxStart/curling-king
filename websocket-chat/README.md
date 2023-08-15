@@ -43,3 +43,8 @@ crypto.createHash('sha1').update(Sec-WebSocket-Key + number).digest('base64')
 
 ```
 
+
+
+
+##  socket.io
+
