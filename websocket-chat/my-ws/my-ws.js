@@ -22,6 +22,7 @@ class Server extends EventEmitter {
   listener = (socket) => {
     socket.setKeepAlive(true);
     socket.send = function (payload) {
+      console.log("payload: ", payload);
       let opcode;
       if (Buffer.isBuffer(payload)) {
         opcode = OPCODE.BUFFER;
@@ -30,12 +31,33 @@ class Server extends EventEmitter {
         payload = Buffer.from(payload);
       }
 
-      let length = payload.length;
+      let dataLength = payload.length,
+        payloadLength = dataLength;
+      console.log("dataLength: ", payloadLength);
 
-      let buffer = Buffer.alloc(length + 2);
+      let offset = 2;
+      if (dataLength >= 65536) {
+        // 2^16次方   ==126时候 最多存储65536  超过就64位了
+        offset += 8;
+        payloadLength = 127;
+      } else if (dataLength > 125) {
+        // 2^7 去掉  127 和126 这两个数字
+        offset += 2;
+        payloadLength = 126;
+      }
+
+      let buffer = Buffer.alloc(dataLength + offset);
       buffer[0] = 0b10000000 | opcode;
-      buffer[1] = length;
-      payload.copy(buffer, 2);
+      buffer[1] = payloadLength;
+
+      if (payloadLength === 126) {
+        buffer.writeUInt16BE(dataLength, 2);
+      } else if (payloadLength === 127) {
+        buffer[2] = buffer[3] = 0; // js最大支持53位 所有用48位去存储这个数字
+        buffer.writeUIntBE(dataLength, 4, 6);
+      }
+
+      payload.copy(buffer, offset);
 
       socket.write(buffer);
     };
@@ -72,14 +94,14 @@ class Server extends EventEmitter {
 
   onmessage(socket, buffer) {
     const FIN = (buffer[0] & 0b10000000) === 0b10000000;
-    console.log('FIN: ', FIN);
+    // console.log('FIN: ', FIN);
     const opcode = buffer[0] & 0b00001111;
-    console.log("OPCODE: ", opcode);
+    // console.log("OPCODE: ", opcode);
     // 是否掩码
     const isMasked = (buffer[1] & 0b10000000) === 0b10000000;
 
     let payloadLen = buffer[1] & 0b01111111;
-    console.log('payloadLen: ', payloadLen);
+    // console.log('payloadLen: ', payloadLen);
 
     let payload;
     if (isMasked) {
